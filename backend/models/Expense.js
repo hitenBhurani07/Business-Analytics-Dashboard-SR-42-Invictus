@@ -18,9 +18,22 @@ const ExpenseSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    dueDate: {
+        type: Date,
+        default: function() { 
+            const d = new Date();
+            d.setDate(d.getDate() + 7);
+            return d;
+        },
+    },
     category: {
         type: String,
         required: true,
+    },
+    status: {
+        type: String,
+        enum: ['Pending', 'Paid', 'Overdue'],
+        default: 'Pending',
     },
 });
 

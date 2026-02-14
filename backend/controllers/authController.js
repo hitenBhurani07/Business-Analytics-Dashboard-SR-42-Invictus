@@ -40,8 +40,7 @@ const registerUser = async (req, res) => {
 
         // Helper to verify file exists before processing
         const safelyProcess = (fileKey, processFn) => {
-            // if (req.files[fileKey] && req.files[fileKey][0]) {
-            if (req.files && req.files[fileKey] && req.files[fileKey][0]) {
+            if (req.files[fileKey] && req.files[fileKey][0]) {
                 const file = req.files[fileKey][0];
                 console.log(`Processing ${fileKey}...`);
 

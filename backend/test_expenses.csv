@@ -1,5 +1,19 @@
 expense_id,date_incurred,description,category,amount,status,due_date
-EXP-201,2026-02-14,Daily Utilities,Utilities,500,Paid,2026-02-14
-EXP-202,2026-02-15,Milk Supplier Invoice,Supplies,800,Pending,2026-02-15
-EXP-203,2026-02-16,Staff Wages,Labor,1000,Pending,2026-02-16
-EXP-150,2026-02-10,Monthly Rent,Fixed,1500,Paid,2026-02-10
+EXP-150,2026-02-01,Electricity Bill,Utilities,1200,Paid,2026-02-05
+EXP-151,2026-02-02,Water Bill,Utilities,600,Paid,2026-02-05
+EXP-152,2026-02-03,Internet Bill,Utilities,800,Paid,2026-02-06
+EXP-153,2026-02-04,Coffee Machine Maintenance,Maintenance,900,Paid,2026-02-07
+EXP-154,2026-02-05,Bakery Supplies Restock,Supplies,1500,Paid,2026-02-08
+EXP-155,2026-02-06,Marketing Flyers,Marketing,700,Paid,2026-02-09
+EXP-156,2026-02-07,Staff Bonus,Labor,1200,Paid,2026-02-07
+EXP-157,2026-02-08,POS Software Subscription,Software,1000,Paid,2026-02-10
+EXP-158,2026-02-09,Milk Supplier Invoice,Supplies,900,Paid,2026-02-11
+EXP-159,2026-02-10,Monthly Rent,Fixed,1500,Paid,2026-02-10
+EXP-200,2026-02-11,Sugar Restock,Supplies,600,Paid,2026-02-13
+EXP-201,2026-02-12,Daily Utilities,Utilities,500,Paid,2026-02-12
+EXP-202,2026-02-13,Milk Supplier Invoice,Supplies,800,Pending,2026-02-15
+EXP-203,2026-02-14,Staff Wages,Labor,1000,Pending,2026-02-16
+EXP-204,2026-02-15,Paper Cups Bulk Order,Supplies,1200,Pending,2026-02-17
+EXP-205,2026-02-16,Coffee Beans Supplier,Supplies,2000,Pending,2026-02-18
+EXP-206,2026-02-17,Equipment Repair,Maintenance,1100,Pending,2026-02-19
+EXP-207,2026-02-18,Digital Marketing Ads,Marketing,1500,Pending,2026-02-20

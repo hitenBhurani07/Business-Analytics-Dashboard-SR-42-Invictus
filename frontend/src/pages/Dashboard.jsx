@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Dashboard = () => {
     const [summary, setSummary] = useState(null);
@@ -9,48 +9,49 @@ const Dashboard = () => {
     const [cashProjection, setCashProjection] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [saleOpen, setSaleOpen] = useState(false);
     const [stockOpen, setStockOpen] = useState(false);
-    const [saleForm, setSaleForm] = useState({ itemName: '', quantity: '', totalAmount: '' });
     const [stockForm, setStockForm] = useState({ itemName: '', addQuantity: '' });
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [inventoryAll, setInventoryAll] = useState([]);
     const navigate = useNavigate();
 
     const fetchData = useCallback(async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
+
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                };
+
+                const [summaryRes, alertsRes, riskRes, projectionRes, inventoryRes] = await Promise.all([
+                    axios.get('http://localhost:5000/api/dashboard/summary', config),
+                    axios.get('http://localhost:5000/api/dashboard/alerts', config),
+                    axios.get('http://localhost:5000/api/dashboard/inventory-risk', config),
+                    axios.get('http://localhost:5000/api/dashboard/cash-projection', config),
+                    axios.get('http://localhost:5000/api/dashboard/inventory', config),
+                ]);
+
+                setSummary(summaryRes.data);
+                setAlerts(alertsRes.data);
+                setInventoryRisk(riskRes.data);
+                setCashProjection(projectionRes.data);
+                setInventoryAll(inventoryRes.data);
+                setLastUpdated(new Date());
+            } catch (err) {
+                console.error(err);
+                setError('Failed to fetch dashboard data');
+                if (err.response && err.response.status === 401) {
+                    navigate('/login');
+                }
+            } finally {
+                setLoading(false);
             }
-
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-
-            const [summaryRes, alertsRes, riskRes, projectionRes] = await Promise.all([
-                axios.get('http://localhost:5000/api/dashboard/summary', config),
-                axios.get('http://localhost:5000/api/dashboard/alerts', config),
-                axios.get('http://localhost:5000/api/dashboard/inventory-risk', config),
-                axios.get('http://localhost:5000/api/dashboard/cash-projection', config),
-            ]);
-
-            setSummary(summaryRes.data);
-            setAlerts(alertsRes.data);
-            setInventoryRisk(riskRes.data);
-            setCashProjection(projectionRes.data);
-            setLastUpdated(new Date());
-        } catch (err) {
-            console.error(err);
-            setError('Failed to fetch dashboard data');
-            if (err.response && err.response.status === 401) {
-                navigate('/login');
-            }
-        } finally {
-            setLoading(false);
-        }
     }, [navigate]);
 
     useEffect(() => {
@@ -64,26 +65,6 @@ const Dashboard = () => {
         }, 30000);
         return () => clearInterval(id);
     }, [fetchData]);
-
-    const submitLogSale = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            const payload = {
-                itemName: saleForm.itemName,
-                quantity: Number(saleForm.quantity),
-                totalAmount: saleForm.totalAmount ? Number(saleForm.totalAmount) : undefined
-            };
-            await axios.post('http://localhost:5000/api/dashboard/log-sale', payload, config);
-            setSaleOpen(false);
-            setSaleForm({ itemName: '', quantity: '', totalAmount: '' });
-            setLoading(true);
-            await fetchData();
-        } catch (err) {
-            console.error(err);
-            setError(err.response?.data?.message || 'Failed to log sale');
-        }
-    };
 
     const submitUpdateStock = async () => {
         try {
@@ -159,15 +140,23 @@ const Dashboard = () => {
                         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">VS</div>
                         <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vyapaar<span className="text-blue-600">Sathi</span></h1>
                     </div>
-                    <button
-                        onClick={() => {
-                            localStorage.removeItem('token');
-                            navigate('/login');
-                        }}
-                        className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
-                    >
-                        Logout
-                    </button>
+                    <div className="flex items-center space-x-4">
+                        <Link
+                            to="/analytics"
+                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                        >
+                            Analytics
+                        </Link>
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem('token');
+                                navigate('/login');
+                            }}
+                            className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </nav>
 
@@ -196,27 +185,6 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Quick Navigation Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <button
-                        onClick={() => navigate('/inventory')}
-                        className="bg-gradient-to-br from-primary to-accent text-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 text-left group"
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-3xl">
-                                
-                            </div>
-                            <svg className="w-6 h-6 text-white/80 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <h3 className="text-xl font-bold mb-2">Smart Inventory</h3>
-                        <p className="text-white/80 text-sm">AI-powered seasonal reorder management</p>
-                        <div className="mt-4 flex items-center gap-2">
-                            <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">🤖 AI Enabled</span>
-                        </div>
-                    </button>
-                </div>
                 {/* 2. Key Metrics Snapshot */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <MetricCard
@@ -266,8 +234,8 @@ const Dashboard = () => {
                             <div className="space-y-3">
                                 {alerts.map((alert, index) => (
                                     <div key={index} className={`flex items-start p-4 rounded-xl border shadow-sm transition-all ${alert.level === 'red'
-                                        ? 'bg-red-50 border-red-200'
-                                        : 'bg-yellow-50 border-yellow-200'
+                                            ? 'bg-red-50 border-red-200'
+                                            : 'bg-yellow-50 border-yellow-200'
                                         }`}>
                                         <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${alert.level === 'red' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600'
                                             }`}>
@@ -388,17 +356,12 @@ const Dashboard = () => {
             {/* 6. Quick Action Buttons (Mobile Floating / Desktop Fixed) */}
             <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 p-4 shadow-lg md:hidden z-50">
                 <div className="flex justify-around">
-                    <ActionButton onClick={() => setSaleOpen(true)} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>} label="Log Sale" />
                     <ActionButton icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>} label="Audit" />
                     <ActionButton onClick={() => setStockOpen(true)} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>} label="Update Stock" />
                 </div>
             </div>
             <div className="hidden md:block fixed bottom-8 right-8 z-50">
                 <div className="flex space-x-4">
-                    <button onClick={() => setSaleOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                        Log Sale
-                    </button>
                     <button onClick={() => setStockOpen(true)} className="bg-gray-800 hover:bg-gray-900 text-white shadow-lg px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         Update Stock
@@ -406,29 +369,17 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {saleOpen && (
-                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-lg p-6 w-96">
-                        <h4 className="text-lg font-bold text-gray-800 mb-4">Log Sale</h4>
-                        <div className="space-y-3">
-                            <input value={saleForm.itemName} onChange={e => setSaleForm({ ...saleForm, itemName: e.target.value })} placeholder="Item Name" className="w-full border rounded-md px-3 py-2" />
-                            <input type="number" value={saleForm.quantity} onChange={e => setSaleForm({ ...saleForm, quantity: e.target.value })} placeholder="Quantity" className="w-full border rounded-md px-3 py-2" />
-                            <input type="number" value={saleForm.totalAmount} onChange={e => setSaleForm({ ...saleForm, totalAmount: e.target.value })} placeholder="Total Amount (optional)" className="w-full border rounded-md px-3 py-2" />
-                        </div>
-                        <div className="mt-4 flex justify-end gap-2">
-                            <button onClick={() => setSaleOpen(false)} className="px-4 py-2 rounded-md border">Cancel</button>
-                            <button onClick={submitLogSale} className="px-4 py-2 rounded-md bg-blue-600 text-white">Save</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {stockOpen && (
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl shadow-lg p-6 w-96">
                         <h4 className="text-lg font-bold text-gray-800 mb-4">Update Stock</h4>
                         <div className="space-y-3">
-                            <input value={stockForm.itemName} onChange={e => setStockForm({ ...stockForm, itemName: e.target.value })} placeholder="Item Name" className="w-full border rounded-md px-3 py-2" />
+                            <select value={stockForm.itemName} onChange={e => setStockForm({ ...stockForm, itemName: e.target.value })} className="w-full border rounded-md px-3 py-2">
+                                <option value="">Select Item</option>
+                                {inventoryAll.map(it => (
+                                    <option key={it._id} value={it.itemName}>{it.itemName} (Stock: {it.quantity})</option>
+                                ))}
+                            </select>
                             <input type="number" value={stockForm.addQuantity} onChange={e => setStockForm({ ...stockForm, addQuantity: e.target.value })} placeholder="Add Quantity (+/-)" className="w-full border rounded-md px-3 py-2" />
                         </div>
                         <div className="mt-4 flex justify-end gap-2">
@@ -480,3 +431,4 @@ const ActionButton = ({ icon, label, onClick }) => (
 );
 
 export default Dashboard;
+
