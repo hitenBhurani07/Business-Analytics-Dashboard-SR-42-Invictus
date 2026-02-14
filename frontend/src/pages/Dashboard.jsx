@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Dashboard = () => {
+const Dashboard = ({ onLogout }) => {
     const [summary, setSummary] = useState(null);
     const [alerts, setAlerts] = useState([]);
     const [inventoryRisk, setInventoryRisk] = useState([]);
@@ -161,7 +161,11 @@ const Dashboard = () => {
                     </div>
                     <button
                         onClick={() => {
-                            localStorage.removeItem('token');
+                            if (onLogout) {
+                                onLogout();
+                            } else {
+                                localStorage.removeItem('token');
+                            }
                             navigate('/login');
                         }}
                         className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
