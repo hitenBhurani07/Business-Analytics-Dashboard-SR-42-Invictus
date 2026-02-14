@@ -12,7 +12,8 @@ const {
     getSalesAnalytics,
     getExpenseAnalytics,
     getInventoryAnalytics,
-    getCashFlowAnalytics
+    getCashFlowAnalytics,
+    getPaymentRadar
 } = require('../controllers/dashboardController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -30,5 +31,8 @@ router.get('/analytics/sales', protect, getSalesAnalytics);
 router.get('/analytics/expenses', protect, getExpenseAnalytics);
 router.get('/analytics/inventory', protect, getInventoryAnalytics);
 router.get('/analytics/cashflow', protect, getCashFlowAnalytics);
+
+// Payment Radar route
+router.get('/payment-radar', protect, getPaymentRadar);
 
 module.exports = router;
