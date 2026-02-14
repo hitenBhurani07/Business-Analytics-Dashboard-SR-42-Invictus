@@ -56,6 +56,25 @@ function App() {
             </Routes>
         </Router>
     );
+  return (
+    <Router>
+      <Routes>
+
+        <Route path="/" element={<LandingPage />} />
+        
+        <Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
