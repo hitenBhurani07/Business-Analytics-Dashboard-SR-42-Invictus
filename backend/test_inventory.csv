@@ -1,4 +1,6 @@
-itemName,quantity,costPrice,sellingPrice
-Apple,100,50,80
-Banana,200,30,50
-Orange,150,40,70
+itemName,quantity,dailyUsage,costPrice,sellingPrice
+Espresso Beans,30,3,25,40
+Whole Milk,3,2,1.5,2.5
+All-Purpose Flour,10,4,0.8,1.2
+Sugar,8,2,1.2,1.8
+Paper Cups,100,5,0.1,0.2

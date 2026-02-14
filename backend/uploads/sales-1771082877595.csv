@@ -1,0 +1,7 @@
+sale_id,timestamp,item_name,quantity,unit_price,total_revenue,payment_method
+S1001,2023-10-20 08:30:00,Espresso Beans,0.5,40.00,20.00,Cash
+S1002,2023-10-20 09:15:00,Whole Milk,2,5.00,10.00,Card
+S1003,2023-10-20 10:00:00,Paper Cups,15,0.00,0.00,Included
+S1004,2023-10-21 08:45:00,Espresso Beans,0.7,40.00,28.00,Cash
+S1005,2023-10-21 11:00:00,Whole Milk,3,5.00,15.00,UPI
+S1006,2023-10-21 13:30:00,All-Purpose Flour,5,0.00,0.00,Internal

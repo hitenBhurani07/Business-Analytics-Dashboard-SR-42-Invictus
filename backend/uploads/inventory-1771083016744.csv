@@ -1,0 +1,6 @@
+item_id,item_name,category,current_stock,unit,min_stock_level,unit_cost,supplier_whatsapp
+INV001,Espresso Beans,Coffee,15,kg,5,25.00,+1234567890
+INV002,Whole Milk,Dairy,10,liters,12,1.50,+1234567890
+INV003,All-Purpose Flour,Baking,50,kg,10,0.80,+1112223333
+INV004,Sugar,Baking,5,kg,10,1.20,+1112223333
+INV005,Paper Cups,Packaging,200,units,500,0.10,+4445556666

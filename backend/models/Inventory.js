@@ -14,6 +14,10 @@ const InventorySchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    dailyUsage: {
+        type: Number,
+        default: 0,
+    },
     costPrice: {
         type: Number,
         required: true,
