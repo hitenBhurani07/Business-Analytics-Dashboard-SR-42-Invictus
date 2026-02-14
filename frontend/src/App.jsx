@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Analytics from './pages/Analytics';
 import { useState } from 'react';
 
 const ProtectedRoute = ({ isAuthenticated, children }) => {
@@ -24,6 +25,14 @@ function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Analytics />
             </ProtectedRoute>
           }
         />
