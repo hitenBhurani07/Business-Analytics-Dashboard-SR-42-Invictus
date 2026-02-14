@@ -40,104 +40,73 @@ const PublicRoute = ({ isAuthenticated, isLoading, children }) => {
 };
 
 function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(localStorage.getItem('token')));
-    const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(() =>
+    Boolean(localStorage.getItem("token"))
+  );
 
-    useEffect(() => {
-        // Simulate auth check delay for smooth loading
-        const timer = setTimeout(() => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                setIsAuthenticated(true);
-            }
-            setIsLoading(false);
-        }, 300);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
-        return () => clearTimeout(timer);
-    }, []);
+  return (
+    <Router>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/register"
+          element={<Register setIsAuthenticated={setIsAuthenticated} />}
+        />
+        <Route
+          path="/login"
+          element={<Login setIsAuthenticated={setIsAuthenticated} />}
+        />
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-    };
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
-    return (
-        <Router>
-            <Routes>
-                {/* Landing Page - Only visible to unauthenticated users */}
-                <Route
-                    path="/"
-                    element={
-                        isLoading ? (
-                            <LoadingSpinner />
-                        ) : isAuthenticated ? (
-                            <Navigate to="/dashboard" replace />
-                        ) : (
-                            <LandingPage />
-                        )
-                    }
-                />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
 
-                {/* Public Routes - Signup & Login */}
-                <Route
-                    path="/register"
-                    element={
-                        <PublicRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
-                            <Register setIsAuthenticated={setIsAuthenticated} />
-                        </PublicRoute>
-                    }
-                />
-                <Route
-                    path="/login"
-                    element={
-                        <PublicRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
-                            <Login setIsAuthenticated={setIsAuthenticated} />
-                        </PublicRoute>
-                    }
-                />
+        <Route
+          path="/data-entry"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <DataEntry />
+            </ProtectedRoute>
+          }
+        />
 
-                {/* Protected Routes - Dashboard & Features */}
-                <Route
-                    path="/dashboard"
-                    element={
-                        <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
-                            <Dashboard onLogout={handleLogout} />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/data-entry"
-                    element={
-                        <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
-                            <DataEntry />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/dead-stock-alerts"
-                    element={
-                        <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
-                            <DeadStockAlerts />
-                        </ProtectedRoute>
-                    }
-                />
+        <Route
+          path="/dead-stock-alerts"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <DeadStockAlerts />
+            </ProtectedRoute>
+          }
+        />
 
-                {/* Catch all - redirect to appropriate page */}
-                <Route
-                    path="*"
-                    element={
-                        isLoading ? (
-                            <LoadingSpinner />
-                        ) : isAuthenticated ? (
-                            <Navigate to="/dashboard" replace />
-                        ) : (
-                            <Navigate to="/" replace />
-                        )
-                    }
-                />
-            </Routes>
-        </Router>
-    );
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

@@ -7,7 +7,12 @@ const {
     getCashProjection,
     logSale,
     updateStock,
-    getStatus
+    getStatus,
+    getInventory,
+    getSalesAnalytics,
+    getExpenseAnalytics,
+    getInventoryAnalytics,
+    getCashFlowAnalytics
 } = require('../controllers/dashboardController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -18,5 +23,12 @@ router.get('/cash-projection', protect, getCashProjection);
 router.post('/log-sale', protect, logSale);
 router.post('/update-stock', protect, updateStock);
 router.get('/status', protect, getStatus);
+router.get('/inventory', protect, getInventory);
+
+// Analytics routes
+router.get('/analytics/sales', protect, getSalesAnalytics);
+router.get('/analytics/expenses', protect, getExpenseAnalytics);
+router.get('/analytics/inventory', protect, getInventoryAnalytics);
+router.get('/analytics/cashflow', protect, getCashFlowAnalytics);
 
 module.exports = router;
