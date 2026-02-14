@@ -9,7 +9,7 @@ const Register = ({ setIsAuthenticated }) => {
         password: '',
         confirmPassword: '',
         businessName: '',
-        businessType: 'Retail', // Default
+        businessType: 'Retail',
         startingCash: '',
     });
 
@@ -69,7 +69,6 @@ const Register = ({ setIsAuthenticated }) => {
     const onChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         
-        // Check password strength when password field changes
         if (e.target.name === 'password') {
             checkPasswordStrength(e.target.value);
         }
@@ -108,9 +107,12 @@ const Register = ({ setIsAuthenticated }) => {
                 },
             });
 
-            localStorage.setItem('token', res.data.token);
-            setIsAuthenticated(true);
-            navigate('/dashboard');
+            // Show success message
+            setError('');
+            alert('Account created successfully! Please log in with your credentials.');
+            
+            // Redirect to login page
+            navigate('/login');
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.message || 'Registration failed');
@@ -379,9 +381,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="inventory"
                                         accept=".csv"
                                         onChange={onFileChange}
-                                        style={{
-                                            borderColor: '#E5E7EB',
-                                        }}
+                                        style={{ borderColor: '#E5E7EB' }}
                                         className="w-full px-4 py-3 border rounded-lg cursor-pointer transition duration-200"
                                     />
                                 </div>
@@ -392,9 +392,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="sales"
                                         accept=".csv"
                                         onChange={onFileChange}
-                                        style={{
-                                            borderColor: '#E5E7EB',
-                                        }}
+                                        style={{ borderColor: '#E5E7EB' }}
                                         className="w-full px-4 py-3 border rounded-lg cursor-pointer transition duration-200"
                                     />
                                 </div>
@@ -405,9 +403,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="expenses"
                                         accept=".csv"
                                         onChange={onFileChange}
-                                        style={{
-                                            borderColor: '#E5E7EB',
-                                        }}
+                                        style={{ borderColor: '#E5E7EB' }}
                                         className="w-full px-4 py-3 border rounded-lg cursor-pointer transition duration-200"
                                     />
                                 </div>

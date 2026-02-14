@@ -25,10 +25,12 @@ const PORT = process.env.PORT || 5000;
 const authRoutes = require('./routes/authRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 const deadStockRoutes = require('./routes/deadStockRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/deadstock', deadStockRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

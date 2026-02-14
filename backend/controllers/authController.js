@@ -9,7 +9,8 @@ const fs = require('fs');
 
 // Generate JWT
 const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+    const secret = process.env.JWT_SECRET || 'dev-secret';
+    return jwt.sign({ id }, secret, {
         expiresIn: '30d',
     });
 };
@@ -37,86 +38,82 @@ const registerUser = async (req, res) => {
             startingCash,
         });
 
-        if (user) {
-            // Process uploaded files if they exist
-            if (req.files) {
-                const processFile = (file, Model, mapData) => {
-                    return new Promise((resolve, reject) => {
-                        const results = [];
-                        fs.createReadStream(file.path)
-                            .pipe(csv())
-                            .on('data', (data) => results.push(mapData(data)))
-                            .on('end', async () => {
-                                try {
-                                    if (results.length > 0) {
-                                        await Model.insertMany(results);
-                                    }
-                                    // Delete file after processing
-                                    fs.unlinkSync(file.path);
-                                    resolve();
-                                } catch (error) {
-                                    reject(error);
+        // Helper to verify file exists before processing
+        const safelyProcess = (fileKey, processFn) => {
+            if (req.files[fileKey] && req.files[fileKey][0]) {
+                const file = req.files[fileKey][0];
+                console.log(`Processing ${fileKey}...`);
+
+                return new Promise((resolve, reject) => {
+                    const results = [];
+                    fs.createReadStream(file.path)
+                        .pipe(csv())
+                        .on('data', (data) => results.push(processFn(data)))
+                        .on('end', async () => {
+                            try {
+                                if (results.length > 0) {
+                                    if (fileKey === 'inventory') await Inventory.insertMany(results);
+                                    if (fileKey === 'sales') await Sales.insertMany(results);
+                                    if (fileKey === 'expenses') await Expense.insertMany(results);
+                                    console.log(`Inserted ${results.length} ${fileKey} records.`);
                                 }
-                            })
-                            .on('error', (error) => reject(error));
-                    });
-                };
-
-                const tasks = [];
-
-                if (req.files['inventory']) {
-                    tasks.push(
-                        processFile(req.files['inventory'][0], Inventory, (data) => ({
-                            ownerId: user._id,
-                            itemName: data.itemName || data.ItemName || data.name, // Handle different casing
-                            quantity: Number(data.quantity || data.Quantity),
-                            costPrice: Number(data.costPrice || data.CostPrice),
-                            sellingPrice: Number(data.sellingPrice || data.SellingPrice),
-                        }))
-                    );
-                }
-
-                if (req.files['sales']) {
-                    tasks.push(
-                        processFile(req.files['sales'][0], Sales, (data) => ({
-                            ownerId: user._id,
-                            itemName: data.itemName || data.ItemName,
-                            quantity: Number(data.quantity || data.Quantity),
-                            totalAmount: Number(data.totalAmount || data.TotalAmount),
-                            date: data.date ? new Date(data.date) : new Date(),
-                        }))
-                    );
-                }
-
-                if (req.files['expenses']) {
-                    tasks.push(
-                        processFile(req.files['expenses'][0], Expense, (data) => ({
-                            ownerId: user._id,
-                            title: data.title || data.Title,
-                            amount: Number(data.amount || data.Amount),
-                            category: data.category || data.Category,
-                            date: data.date ? new Date(data.date) : new Date(),
-                        }))
-                    );
-                }
-
-                await Promise.all(tasks);
+                                fs.unlinkSync(file.path);
+                                resolve();
+                            } catch (err) {
+                                console.error(`Error saving ${fileKey}:`, err);
+                                reject(err);
+                            }
+                        })
+                        .on('error', (err) => {
+                            console.error(`Error reading ${fileKey}:`, err);
+                            reject(err);
+                        });
+                });
             }
+            return Promise.resolve();
+        };
 
-            res.status(201).json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                businessName: user.businessName,
-                token: generateToken(user._id),
-            });
-        } else {
-            res.status(400).json({ message: 'Invalid user data' });
-        }
+        const tasks = [];
+
+        tasks.push(safelyProcess('inventory', (data) => ({
+            ownerId: user._id,
+            itemName: data.itemName || data.ItemName || data.name || data.item_name || 'Unknown Item',
+            quantity: Number(data.quantity || data.Quantity || data.current_stock || 0),
+            dailyUsage: Number(data.dailyUsage || data.DailyUsage || data.min_stock_level || 5),
+            costPrice: Number(data.costPrice || data.CostPrice || data.unit_cost || 0),
+            sellingPrice: Number(data.sellingPrice || data.SellingPrice || (data.unit_cost ? data.unit_cost * 1.5 : 0)),
+        })));
+
+        tasks.push(safelyProcess('sales', (data) => ({
+            ownerId: user._id,
+            itemName: data.itemName || data.ItemName || data.item_name || 'Unknown Item',
+            quantity: Number(data.quantity || data.Quantity || 1),
+            totalAmount: Number(data.totalAmount || data.TotalAmount || data.total_revenue || 0),
+            date: data.date || data.timestamp ? new Date(data.date || data.timestamp) : new Date(),
+        })));
+
+        tasks.push(safelyProcess('expenses', (data) => ({
+            ownerId: user._id,
+            title: data.title || data.Title || data.description || 'Expense',
+            amount: Number(data.amount || data.Amount || 0),
+            category: data.category || data.Category || 'General',
+            date: data.date || data.date_incurred ? new Date(data.date || data.date_incurred) : new Date(),
+        })));
+
+        await Promise.all(tasks);
+
+
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            businessName: user.businessName,
+            token: generateToken(user._id),
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message, stack: error.stack });
+    console.error(error);
+    res.status(500).json({ message: error.message, stack: error.stack });
     }
 };
 

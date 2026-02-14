@@ -12,8 +12,6 @@ const Login = ({ setIsAuthenticated }) => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const { email, password } = formData;
-
     const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async (e) => {
@@ -37,16 +35,16 @@ const Login = ({ setIsAuthenticated }) => {
 
     return (
         <div style={{ background: '#FFFFFF' }} className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full">
+            <div className="max-w-md w-full space-y-8">
                 {/* Header */}
-                <div className="text-center mb-8">
+                <div className="text-center">
                     <h1 style={{ color: '#2563EB' }} className="text-4xl font-bold mb-2">Vyapaar</h1>
-                    <p style={{ color: '#6B7280' }} className="text-lg">Smart Business Management</p>
+                    <p style={{ color: '#6B7280' }} className="text-lg">Manage Your Business</p>
                 </div>
 
                 {/* Card */}
                 <div style={{ backgroundColor: '#F9FAFB' }} className="rounded-2xl p-8 shadow-lg">
-                    <h2 style={{ color: '#111827' }} className="text-2xl font-bold text-center mb-8">Welcome Back</h2>
+                    <h2 style={{ color: '#111827' }} className="text-2xl font-bold text-center mb-8">Sign In</h2>
 
                     <form className="space-y-5" onSubmit={onSubmit}>
                         {error && (
@@ -62,11 +60,11 @@ const Login = ({ setIsAuthenticated }) => {
                                 type="email"
                                 required
                                 style={{ borderColor: '#E5E7EB' }}
-                                className="w-full px-4 py-3 border rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0"
+                                className="w-full px-4 py-3 border rounded-lg transition duration-200 focus:outline-none focus:ring-2"
                                 onFocus={(e) => e.target.style.borderColor = '#2563EB'}
                                 onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
                                 placeholder="you@example.com"
-                                value={email}
+                                value={formData.email}
                                 onChange={onChange}
                             />
                         </div>
@@ -78,11 +76,11 @@ const Login = ({ setIsAuthenticated }) => {
                                 type="password"
                                 required
                                 style={{ borderColor: '#E5E7EB' }}
-                                className="w-full px-4 py-3 border rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0"
+                                className="w-full px-4 py-3 border rounded-lg transition duration-200 focus:outline-none focus:ring-2"
                                 onFocus={(e) => e.target.style.borderColor = '#2563EB'}
                                 onBlur={(e) => e.target.style.borderColor = '#E5E7EB'}
                                 placeholder="••••••••"
-                                value={password}
+                                value={formData.password}
                                 onChange={onChange}
                             />
                         </div>
@@ -91,16 +89,16 @@ const Login = ({ setIsAuthenticated }) => {
                             type="submit"
                             disabled={loading}
                             style={{ backgroundColor: '#2563EB' }}
-                            className="w-full text-white font-semibold py-3 rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50"
+                            className="w-full text-white font-semibold py-3 rounded-lg transition duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 mt-6"
                         >
-                            {loading ? 'Signing in...' : 'Sign In'}
+                            {loading ? 'Signing In...' : 'Sign In'}
                         </button>
                     </form>
 
                     {/* Divider */}
                     <div className="my-6 flex items-center">
                         <div style={{ backgroundColor: '#E5E7EB' }} className="flex-grow h-px"></div>
-                        <span style={{ color: '#6B7280' }} className="px-3 text-sm">New here?</span>
+                        <span style={{ color: '#6B7280' }} className="px-3 text-sm">New user?</span>
                         <div style={{ backgroundColor: '#E5E7EB' }} className="flex-grow h-px"></div>
                     </div>
 
@@ -115,9 +113,6 @@ const Login = ({ setIsAuthenticated }) => {
                         </button>
                     </Link>
                 </div>
-
-                {/* Footer */}
-                <p style={{ color: '#6B7280' }} className="text-center mt-6 text-sm">© 2026 Vyapaar. All rights reserved.</p>
             </div>
         </div>
     );
