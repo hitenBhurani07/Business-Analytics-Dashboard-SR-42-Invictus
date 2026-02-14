@@ -1,3 +1,6 @@
-itemName,quantity,totalAmount,date
-Apple,5,400,2023-10-26
-Banana,10,500,2023-10-27
+sale_id,timestamp,item_name,quantity,unit_price,total_revenue,payment_method
+S2001,2026-02-14 08:30:00,Espresso Beans,5,40.00,200.00,Cash
+S2002,2026-02-14 12:00:00,Whole Milk,30,2.50,75.00,Card
+S2003,2026-02-15 09:15:00,Espresso Beans,6,40.00,240.00,UPI
+S2004,2026-02-16 10:00:00,All-Purpose Flour,10,1.20,12.00,Internal
+S1999,2026-02-10 10:00:00,Sugar,5,1.80,9.00,Cash

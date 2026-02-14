@@ -1,3 +1,5 @@
-title,amount,category,date
-Rent,1000,Overhead,2023-10-01
-Electricity,200,Utilities,2023-10-05
+expense_id,date_incurred,description,category,amount,status,due_date
+EXP-201,2026-02-14,Daily Utilities,Utilities,500,Paid,2026-02-14
+EXP-202,2026-02-15,Milk Supplier Invoice,Supplies,800,Pending,2026-02-15
+EXP-203,2026-02-16,Staff Wages,Labor,1000,Pending,2026-02-16
+EXP-150,2026-02-10,Monthly Rent,Fixed,1500,Paid,2026-02-10

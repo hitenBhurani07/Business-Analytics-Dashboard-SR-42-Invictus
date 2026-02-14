@@ -1,0 +1,6 @@
+expense_id,date_incurred,description,category,amount,status,due_date
+EXP-99,2023-10-01,Monthly Rent,Fixed,1500,Paid,2023-10-01
+EXP-100,2023-10-15,Electricity Bill,Utilities,200,Pending,2023-10-25
+EXP-101,2023-10-18,Flour Delivery,Supplies,80,Paid,2023-10-18
+EXP-102,2023-10-22,Milk Supplier Invoice,Supplies,120,Pending,2023-10-24
+EXP-103,2023-10-23,Staff Wages,Labor,600,Pending,2023-10-27
