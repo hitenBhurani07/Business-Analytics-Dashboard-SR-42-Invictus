@@ -6,6 +6,7 @@ import Analytics from "./pages/Analytics";
 import PaymentRadar from "./pages/PaymentRadar";
 import DataEntry from "./pages/DataEntry";
 import DeadStockAlerts from "./pages/DeadStockAlerts";
+import InventoryPage from "./pages/InventoryPage";
 import LandingPage from "./pages/LandingPage";
 import { useState, useEffect } from "react";
 

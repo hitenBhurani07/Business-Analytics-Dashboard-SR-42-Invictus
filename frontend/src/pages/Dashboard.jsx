@@ -142,6 +142,18 @@ const Dashboard = () => {
                     </div>
                     <div className="flex items-center space-x-4">
                         <Link
+                            to="/payment-radar"
+                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                        >
+                            Payment Radar
+                        </Link>
+                        <Link
+                            to="/inventory"
+                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                        >
+                            Inventory
+                        </Link>
+                        <Link
                             to="/analytics"
                             className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
                         >
