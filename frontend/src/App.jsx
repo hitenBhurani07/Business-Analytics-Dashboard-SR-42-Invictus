@@ -8,7 +8,6 @@ import DataEntry from "./pages/DataEntry";
 import DeadStockAlerts from "./pages/DeadStockAlerts";
 import InventoryPage from "./pages/InventoryPage";
 import LandingPage from "./pages/LandingPage";
-import InventoryPage from "./pages/InventoryPage";
 import PageTransition from "./components/PageTransition";
 import { ThemeProvider } from "./context/ThemeContext";
 import { useState, useEffect } from "react";

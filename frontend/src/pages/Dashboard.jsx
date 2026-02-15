@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import AppNavbar from '../components/AppNavbar';
 
 const Dashboard = () => {
     const [summary, setSummary] = useState(null);
@@ -132,47 +133,9 @@ const Dashboard = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 pb-24 md:pb-8 font-sans">
+            <AppNavbar />
 
-            {/* Top Navigation */}
-            <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">VS</div>
-                        <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vyapaar<span className="text-blue-600">Sathi</span></h1>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Link
-                            to="/payment-radar"
-                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                        >
-                            Payment Radar
-                        </Link>
-                        <Link
-                            to="/inventory"
-                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                        >
-                            Inventory
-                        </Link>
-                        <Link
-                            to="/analytics"
-                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                        >
-                            Analytics
-                        </Link>
-                        <button
-                            onClick={() => {
-                                localStorage.removeItem('token');
-                                navigate('/login');
-                            }}
-                            className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
-                        >
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </nav>
-
-            <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+            <main className="max-w-7xl mx-auto px-4 py-6 space-y-6 mt-16">
 
                 {/* 1. Status Card */}
                 <div className={`${statusColor} rounded-2xl shadow-xl p-6 text-white transform transition-all hover:scale-[1.01]`}>

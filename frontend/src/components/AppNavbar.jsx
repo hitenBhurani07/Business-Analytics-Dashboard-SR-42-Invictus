@@ -8,6 +8,8 @@ const AppNavbar = () => {
 
   const navLinks = [
     { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Inventory', href: '/inventory' },
+    { name: 'Payment Radar', href: '/payment-radar' },
     { name: 'Data Entry', href: '/data-entry' },
     { name: 'Dead Stock', href: '/dead-stock-alerts' },
     { name: 'Analytics', href: '/analytics' },

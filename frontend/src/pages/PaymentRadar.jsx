@@ -1,8 +1,99 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AppNavbar from '../components/AppNavbar';
 
+
+// Financial Summary Component
+const FinancialSummary = ({ radarData, onSendEmail, sendingEmail }) => {
+    const { financialStatus, analytics, overdueInvoices, upcomingPayments, summary } = radarData;
+    
+    return (
+        <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-lg p-6 text-white mb-8 shadow-lg">
+            <div className="flex justify-between items-start mb-6">
+                <div>
+                    <h2 className="text-3xl font-bold mb-2">Financial Summary</h2>
+                    <p className="text-slate-300">Payment Radar Report - {new Date().toLocaleDateString()}</p>
+                </div>
+                <button
+                    onClick={onSendEmail}
+                    disabled={sendingEmail}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2"
+                >
+                    {sendingEmail ? (
+                        <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                            Sending...
+                        </>
+                    ) : (
+                        <>
+                            📧 Send Report via Email
+                        </>
+                    )}
+                </button>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* Current Cash */}
+                <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+                    <p className="text-slate-300 text-sm font-semibold mb-2">Current Cash</p>
+                    <p className="text-2xl font-bold">₹{financialStatus.currentCash.toLocaleString('en-IN')}</p>
+                    <p className="text-xs text-slate-400 mt-1">Available funds</p>
+                </div>
+
+                {/* Projected Cash */}
+                <div className={`rounded-lg p-4 backdrop-blur-sm ${financialStatus.projectedCashAfterPayments < 0 ? 'bg-red-500/20' : 'bg-green-500/20'}`}>
+                    <p className="text-slate-300 text-sm font-semibold mb-2">Projected Cash</p>
+                    <p className={`text-2xl font-bold ${financialStatus.projectedCashAfterPayments < 0 ? 'text-red-200' : 'text-green-200'}`}>
+                        ₹{financialStatus.projectedCashAfterPayments.toLocaleString('en-IN')}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">After payments</p>
+                </div>
+
+                {/* Total Pending */}
+                <div className="bg-orange-500/20 rounded-lg p-4 backdrop-blur-sm">
+                    <p className="text-slate-300 text-sm font-semibold mb-2">Total Pending</p>
+                    <p className="text-2xl font-bold text-orange-200">₹{summary.totalPendingAmount.toLocaleString('en-IN')}</p>
+                    <p className="text-xs text-slate-400 mt-1">{overdueInvoices.count + upcomingPayments.count} invoices</p>
+                </div>
+
+                {/* Risk Level */}
+                <div className={`rounded-lg p-4 backdrop-blur-sm ${
+                    financialStatus.riskLevel === 'CRITICAL' ? 'bg-red-500/20' :
+                    financialStatus.riskLevel === 'HIGH' ? 'bg-yellow-500/20' :
+                    'bg-green-500/20'
+                }`}>
+                    <p className="text-slate-300 text-sm font-semibold mb-2">Risk Level</p>
+                    <p className={`text-2xl font-bold ${
+                        financialStatus.riskLevel === 'CRITICAL' ? 'text-red-200' :
+                        financialStatus.riskLevel === 'HIGH' ? 'text-yellow-200' :
+                        'text-green-200'
+                    }`}>
+                        {financialStatus.riskLevel}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">Risk Score: {analytics.riskScore}/100</p>
+                </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-slate-600">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <p className="text-slate-400 text-sm">Overdue Invoices</p>
+                        <p className="text-xl font-bold text-red-300">{overdueInvoices.count}</p>
+                    </div>
+                    <div>
+                        <p className="text-slate-400 text-sm">Upcoming Payments (3 days)</p>
+                        <p className="text-xl font-bold text-yellow-300">{upcomingPayments.count}</p>
+                    </div>
+                    <div>
+                        <p className="text-slate-400 text-sm">Avg Daily Sales</p>
+                        <p className="text-xl font-bold text-green-300">₹{analytics.averageDailySales.toLocaleString('en-IN')}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 // Risk Score Component
 const RiskScore = ({ score, riskLevel }) => {
@@ -22,7 +113,6 @@ const RiskScore = ({ score, riskLevel }) => {
         <div className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg p-6 text-white shadow-lg">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">Risk Score</h3>
-            
             </div>
             
             {/* Circular Score Display */}
@@ -209,6 +299,7 @@ const PaymentRadar = () => {
     const [radarData, setRadarData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [sendingEmail, setSendingEmail] = useState(false);
     const navigate = useNavigate();
 
     const fetchPaymentRadar = useCallback(async () => {
@@ -243,6 +334,29 @@ const PaymentRadar = () => {
     useEffect(() => {
         fetchPaymentRadar();
     }, [fetchPaymentRadar]);
+
+    const sendEmailReport = async () => {
+        try {
+            setSendingEmail(true);
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const response = await axios.post('http://localhost:5000/api/dashboard/send-payment-radar-email', {}, config);
+            
+            if (response.data.success) {
+                alert('✅ Payment Radar report sent to your email!');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('❌ Failed to send email: ' + (err.response?.data?.message || err.message));
+        } finally {
+            setSendingEmail(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -281,31 +395,17 @@ const PaymentRadar = () => {
 
     return (
         <div className="min-h-screen bg-white">
-            {/* Navigation Header */}
-            <div className="bg-white shadow-sm border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-3xl font-bold text-slate-900">Payment Radar</h1>
-                        <div className="flex gap-4">
-                            <Link 
-                                to="/dashboard" 
-                                className="px-4 py-2 bg-slate-200 text-slate-900 rounded-lg hover:bg-slate-300 font-medium transition-colors duration-300"
-                            >
-                                Back to Dashboard
-                            </Link>
-                            <button 
-                                onClick={fetchPaymentRadar}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-300"
-                            >
-                                Refresh
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <AppNavbar />
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-16">
+                {/* Financial Summary Section */}
+                <FinancialSummary 
+                    radarData={radarData} 
+                    onSendEmail={sendEmailReport}
+                    sendingEmail={sendingEmail}
+                />
+
                 {/* AI Explanation Section */}
                 <AIExplanation 
                     message={analytics.aiExplanation} 
