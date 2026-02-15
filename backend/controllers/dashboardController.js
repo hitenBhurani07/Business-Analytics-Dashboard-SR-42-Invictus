@@ -976,11 +976,6 @@ const getPaymentRadar = async (req, res) => {
             }
         };
 
-        // Check and send financial alert email (non-blocking)
-        checkAndSendFinancialAlert(user, responseData).catch(err => {
-            console.error('Error in email alert check:', err);
-        });
-
         // Send response to client
         res.json(responseData);
 
@@ -989,6 +984,126 @@ const getPaymentRadar = async (req, res) => {
         res.status(500).json({ 
             success: false,
             message: 'Server error retrieving payment radar data',
+            error: error.message
+        });
+    }
+};
+
+// @desc    Send Payment Radar detailed report via email
+// @route   POST /api/dashboard/send-payment-radar-email
+// @access  Private
+const sendPaymentRadarEmail = async (req, res) => {
+    try {
+        const ownerId = req.user._id;
+        const user = await User.findById(ownerId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Get current payment radar data
+        const sales = await Sales.find({ ownerId });
+        const expenses = await Expense.find({ ownerId });
+        const inventory = await Inventory.find({ ownerId });
+
+        const totalSales = sales.reduce((acc, curr) => acc + curr.totalAmount, 0);
+        const totalExpenses = expenses.reduce((acc, curr) => acc + curr.amount, 0);
+        const currentCash = user.startingCash + totalSales - totalExpenses;
+
+        const today = new Date();
+        today.setDate(today.getDate() - 1);
+        const avgDailySales = sales
+            .filter(s => new Date(s.date) >= today)
+            .reduce((acc, curr) => acc + curr.totalAmount, 0) || 0;
+
+        // Get overdue and upcoming
+        const now = new Date();
+        const threeDaysFromNow = new Date(now);
+        threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+
+        const overdueInvoices = expenses.filter(e => new Date(e.dueDate) < now && e.status !== 'paid');
+        const upcomingPayments = expenses.filter(e => 
+            new Date(e.dueDate) >= now && 
+            new Date(e.dueDate) <= threeDaysFromNow && 
+            e.status !== 'paid'
+        );
+
+        const upcomingAmount = upcomingPayments.reduce((sum, exp) => sum + exp.amount, 0);
+        const projectedCashAfterPayments = currentCash - upcomingAmount;
+
+        const riskScore = calculateRiskScore(currentCash, projectedCashAfterPayments, upcomingAmount, avgDailySales, overdueInvoices.length);
+        const aiExplanation = generateAIExplanation(currentCash, projectedCashAfterPayments, overdueInvoices, upcomingPayments, avgDailySales);
+        const actionSuggestions = generateActionSuggestions(riskScore, projectedCashAfterPayments, overdueInvoices, avgDailySales);
+
+        let riskLevel = 'LOW';
+        if (riskScore >= 75) {
+            riskLevel = 'CRITICAL';
+        } else if (riskScore >= 50) {
+            riskLevel = 'HIGH';
+        } else if (riskScore >= 25) {
+            riskLevel = 'MEDIUM';
+        }
+
+        const responseData = {
+            success: true,
+            timestamp: new Date(),
+            financialStatus: {
+                currentCash: Math.round(currentCash * 100) / 100,
+                upcomingAmount: Math.round(upcomingAmount * 100) / 100,
+                projectedCashAfterPayments,
+                riskLevel,
+                healthStatus: riskLevel === 'HIGH' ? 'Critical' : (riskLevel === 'MEDIUM' ? 'Caution' : 'Healthy')
+            },
+            analytics: {
+                averageDailySales: Math.round(avgDailySales * 100) / 100,
+                riskScore,
+                aiExplanation,
+                actionSuggestions
+            },
+            overdueInvoices: {
+                count: overdueInvoices.length,
+                totalAmount: overdueInvoices.reduce((sum, inv) => sum + inv.amount, 0),
+                invoices: overdueInvoices
+            },
+            upcomingPayments: {
+                count: upcomingPayments.length,
+                totalAmount: upcomingPayments.reduce((sum, inv) => sum + inv.amount, 0),
+                invoices: upcomingPayments
+            },
+            summary: {
+                totalPendingAmount: [...overdueInvoices, ...upcomingPayments].reduce((sum, inv) => sum + inv.amount, 0),
+                nextPaymentDue: upcomingPayments.length > 0 ? upcomingPayments[0].dueDate : null,
+                canAffordAllPayments: projectedCashAfterPayments >= 0
+            }
+        };
+
+        // Send detailed email
+        const emailData = {
+            userEmail: user.email,
+            riskLevel: responseData.financialStatus.riskLevel,
+            riskScore: responseData.analytics.riskScore,
+            currentCash: responseData.financialStatus.currentCash,
+            projectedCash: responseData.financialStatus.projectedCashAfterPayments,
+            overdueAmount: responseData.overdueInvoices.totalAmount,
+            upcomingAmount: responseData.upcomingPayments.totalAmount,
+            overdueCount: responseData.overdueInvoices.count,
+            aiExplanation: responseData.analytics.aiExplanation,
+            topSuggestion: responseData.analytics.actionSuggestions[0] || 'Review your payment schedule'
+        };
+
+        const emailResult = await sendFinancialRiskAlert(emailData);
+
+        res.json({ 
+            success: emailResult.success, 
+            message: emailResult.success ? 'Payment Radar report sent to your email' : 'Failed to send email',
+            emailSent: emailResult.success
+        });
+
+    } catch (error) {
+        console.error('Send Payment Radar Email Error:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Failed to send email',
             error: error.message
         });
     }
@@ -1007,5 +1122,6 @@ module.exports = {
     getExpenseAnalytics,
     getInventoryAnalytics,
     getCashFlowAnalytics,
-    getPaymentRadar
+    getPaymentRadar,
+    sendPaymentRadarEmail
 };

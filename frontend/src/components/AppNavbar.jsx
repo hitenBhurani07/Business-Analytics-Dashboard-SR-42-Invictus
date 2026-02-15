@@ -9,6 +9,8 @@ const AppNavbar = () => {
   const navLinks = [
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Voice Entry', href: '/data-entry' },
+    { name: 'Inventory', href: '/inventory' },
+    { name: 'Payment Radar', href: '/payment-radar' },
     { name: 'Dead Stock', href: '/dead-stock-alerts' },
     { name: 'Analytics', href: '/analytics' },
   ];

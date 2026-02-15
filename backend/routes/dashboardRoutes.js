@@ -13,7 +13,8 @@ const {
     getExpenseAnalytics,
     getInventoryAnalytics,
     getCashFlowAnalytics,
-    getPaymentRadar
+    getPaymentRadar,
+    sendPaymentRadarEmail
 } = require('../controllers/dashboardController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -32,7 +33,8 @@ router.get('/analytics/expenses', protect, getExpenseAnalytics);
 router.get('/analytics/inventory', protect, getInventoryAnalytics);
 router.get('/analytics/cashflow', protect, getCashFlowAnalytics);
 
-// Payment Radar route
+// Payment Radar routes
 router.get('/payment-radar', protect, getPaymentRadar);
+router.post('/send-payment-radar-email', protect, sendPaymentRadarEmail);
 
 module.exports = router;
