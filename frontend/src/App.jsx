@@ -33,24 +33,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/register"
-          element={<Register setIsAuthenticated={setIsAuthenticated} />}
-        />
-        <Route
-          path="/login"
-          element={<Login setIsAuthenticated={setIsAuthenticated} />}
-        />
 
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/analytics"
@@ -90,6 +73,15 @@ function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        <><Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} /><Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} /><Route
+      path="/dashboard"
+      element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+        <Dashboard />
+      </ProtectedRoute>} /><Route
+        path="/inventory"
+        element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+          <InventoryPage />
+        </ProtectedRoute>} /></>
       </Routes>
     </Router>
   );

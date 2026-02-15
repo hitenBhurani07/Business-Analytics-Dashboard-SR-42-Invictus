@@ -147,12 +147,6 @@ const Dashboard = () => {
                         >
                             Analytics
                         </Link>
-                        <Link
-                            to="/payment-radar"
-                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                        >
-                            Payment Radar
-                        </Link>
                         <button
                             onClick={() => {
                                 localStorage.removeItem('token');
