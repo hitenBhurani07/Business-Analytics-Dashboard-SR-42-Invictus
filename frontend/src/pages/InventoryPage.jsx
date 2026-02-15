@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import AppNavbar from '../components/AppNavbar';
 import InventoryList from '../components/inventory/InventoryList';
 import AddInventoryForm from '../components/inventory/AddInventoryForm';
 import { FiPlus, FiRefreshCw, FiAlertCircle, FiTrendingUp } from 'react-icons/fi';
@@ -72,41 +73,10 @@ const InventoryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cardBg">
+    <div className="min-h-screen bg-white">
+      <AppNavbar />
       
-      {/* Top Navigation */}
-      <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="text-textLight hover:text-primary transition-colors"
-            >
-              ← Back to Dashboard
-            </button>
-            <div className="hidden md:block w-px h-6 bg-gray-300"></div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
-                
-              </div>
-              <h1 className="text-xl font-bold text-textMain">
-                Smart Inventory <span className="text-primary">Manager</span>
-              </h1>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              localStorage.removeItem('token');
-              navigate('/login');
-            }}
-            className="text-sm text-textLight hover:text-danger font-medium transition-colors"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6 pt-24">
         
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -114,55 +84,55 @@ const InventoryPage = () => {
           {/* Total Items */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <span className="text-2xl"></span>
               </div>
-              <span className="text-xs font-semibold text-textLight bg-gray-100 px-2 py-1 rounded-full">
+              <span className="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-full">
                 Total
               </span>
             </div>
-            <h3 className="text-3xl font-bold text-textMain mb-1">
+            <h3 className="text-3xl font-bold text-slate-900 mb-1">
               {stats?.totalItems || 0}
             </h3>
-            <p className="text-sm text-textLight">Inventory Items</p>
+            <p className="text-sm text-slate-600">Inventory Items</p>
           </div>
 
           {/* Low Stock Alerts */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 bg-danger/10 rounded-lg flex items-center justify-center">
-                <FiAlertCircle className="text-2xl text-danger" />
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                <FiAlertCircle className="text-2xl text-red-600" />
               </div>
-              <span className="text-xs font-semibold text-danger bg-danger/10 px-2 py-1 rounded-full">
+              <span className="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded-full">
                 Alert
               </span>
             </div>
-            <h3 className="text-3xl font-bold text-danger mb-1">
+            <h3 className="text-3xl font-bold text-red-600 mb-1">
               {stats?.lowStock || 0}
             </h3>
-            <p className="text-sm text-textLight">Need Reordering</p>
+            <p className="text-sm text-slate-600">Need Reordering</p>
           </div>
 
           {/* Seasonal Impact */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
-                <FiTrendingUp className="text-2xl text-accent" />
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <FiTrendingUp className="text-2xl text-purple-600" />
               </div>
-              <span className="text-xs font-semibold text-accent bg-accent/10 px-2 py-1 rounded-full">
+              <span className="text-xs font-semibold text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
                 Winter
               </span>
             </div>
-            <h3 className="text-3xl font-bold text-accent mb-1">
-              {stats?.avgSeasonalMultiplier || '1.0'}x
+            <h3 className="text-3xl font-bold text-slate-900 mb-1">
+              {stats?.avgSeasonalMultiplier || 0}x
             </h3>
-            <p className="text-sm text-textLight">Avg Seasonal Demand</p>
+            <p className="text-sm text-slate-600">Avg Seasonal Demand</p>
           </div>
 
         </div>
 
         {/* Action Buttons Bar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
           <div className="flex flex-col md:flex-row gap-3 justify-between items-center">
             
             <div className="flex items-center gap-3">
@@ -195,7 +165,7 @@ const InventoryPage = () => {
 
             <button
               onClick={() => setRefreshKey(prev => prev + 1)}
-              className="text-textLight hover:text-primary transition-colors flex items-center gap-2"
+              className="text-slate-600 hover:text-blue-600 transition-colors flex items-center gap-2"
             >
               <FiRefreshCw className="text-lg" />
               <span className="text-sm font-medium">Refresh</span>
@@ -205,26 +175,26 @@ const InventoryPage = () => {
         </div>
 
         {/* AI Feature Info Banner */}
-        <div className="bg-linear-to-r from-accent/10 via-primary/10 to-secondary/10 border border-accent/20 rounded-xl p-6">
+        <div className="bg-gradient-to-r from-purple-100 via-blue-100 to-green-100 border border-purple-200 rounded-xl p-6">
           <div className="flex items-start gap-4">
             <div className="text-4xl"></div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-textMain mb-2">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
                 Smart Seasonal Reorder Points - AI Powered
               </h3>
-              <p className="text-sm text-textLight leading-relaxed mb-3">
+              <p className="text-sm text-slate-700 leading-relaxed mb-3">
                 Our AI automatically analyzes your inventory items and adjusts reorder points based on seasonal demand patterns. 
                 For example: <strong>Cold Drinks</strong> reorder point increases in summer (2.0x) and decreases in winter (0.6x). 
                 No manual adjustments needed!
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="text-xs bg-white px-3 py-1 rounded-full text-textMain font-semibold">
+                <span className="text-xs bg-white px-3 py-1 rounded-full text-slate-900 font-semibold">
                  Summer: High demand items
                 </span>
-                <span className="text-xs bg-white px-3 py-1 rounded-full text-textMain font-semibold">
+                <span className="text-xs bg-white px-3 py-1 rounded-full text-slate-900 font-semibold">
                   Winter: Cold season items
                 </span>
-                <span className="text-xs bg-white px-3 py-1 rounded-full text-textMain font-semibold">
+                <span className="text-xs bg-white px-3 py-1 rounded-full text-slate-900 font-semibold">
                   Spring/ Autumn: Transitional patterns
                 </span>
               </div>
@@ -235,8 +205,8 @@ const InventoryPage = () => {
         {/* Inventory List */}
         <div>
           <div className="mb-4">
-            <h2 className="text-2xl font-bold text-textMain">Your Inventory</h2>
-            <p className="text-textLight">Manage items with AI-powered seasonal insights</p>
+            <h2 className="text-2xl font-bold text-slate-900">Your Inventory</h2>
+            <p className="text-slate-700">Manage items with AI-powered seasonal insights</p>
           </div>
           <InventoryList key={refreshKey} />
         </div>

@@ -8,6 +8,9 @@ const connectDB = require("./config/db");
 // Initialize express app
 const app = express();
 
+// Get PORT from environment or use default
+const PORT = process.env.PORT || 5000;
+
 // Connect to MongoDB
 connectDB();
 

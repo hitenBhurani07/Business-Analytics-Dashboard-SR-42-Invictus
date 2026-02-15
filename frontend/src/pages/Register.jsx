@@ -140,7 +140,7 @@ const Register = ({ setIsAuthenticated }) => {
                     <form className="space-y-6" onSubmit={onSubmit}>
                         {/* Personal Information */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-gray-600">Personal Information</h3>
+                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-slate-600">Personal Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-textMain mb-2">Full Name</label>
@@ -148,7 +148,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="name"
                                         type="text"
                                         required
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                         placeholder="John Doe"
                                         value={formData.name}
                                         onChange={onChange}
@@ -160,7 +160,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="email"
                                         type="email"
                                         required
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                         placeholder="you@example.com"
                                         value={formData.email}
                                         onChange={onChange}
@@ -170,8 +170,8 @@ const Register = ({ setIsAuthenticated }) => {
                         </div>
 
                         {/* Password Section */}
-                        <div className="space-y-4 pt-2 border-t border-gray-200">
-                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-gray-600">Security</h3>
+                        <div className="space-y-4 pt-2 border-t border-slate-200">
+                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-slate-600">Security</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-textMain mb-2">Password</label>
@@ -179,7 +179,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="password"
                                         type="password"
                                         required
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                         placeholder="••••••••"
                                         value={formData.password}
                                         onChange={onChange}
@@ -189,7 +189,7 @@ const Register = ({ setIsAuthenticated }) => {
                                     {formData.password && (
                                         <div className="mt-3 space-y-2">
                                             <div className="flex items-center gap-2">
-                                                <div className="flex-grow h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                <div className="flex-grow h-2 bg-slate-200 rounded-full overflow-hidden">
                                                     <div
                                                         className="h-full transition-all duration-300"
                                                         style={{
@@ -250,7 +250,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="confirmPassword"
                                         type="password"
                                         required
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                         placeholder="••••••••"
                                         value={formData.confirmPassword}
                                         onChange={onChange}
@@ -265,8 +265,8 @@ const Register = ({ setIsAuthenticated }) => {
                         </div>
 
                         {/* Business Information */}
-                        <div className="space-y-4 pt-2 border-t border-gray-200">
-                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-gray-600">Business Information</h3>
+                        <div className="space-y-4 pt-2 border-t border-slate-200">
+                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-slate-600">Business Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-textMain mb-2">Business Name</label>
@@ -274,7 +274,7 @@ const Register = ({ setIsAuthenticated }) => {
                                         name="businessName"
                                         type="text"
                                         required
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                         placeholder="My Business"
                                         value={formData.businessName}
                                         onChange={onChange}
@@ -285,7 +285,7 @@ const Register = ({ setIsAuthenticated }) => {
                                     <select
                                         name="businessType"
                                         required
-                                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                         value={formData.businessType}
                                         onChange={onChange}
                                     >
@@ -302,7 +302,7 @@ const Register = ({ setIsAuthenticated }) => {
                                     name="startingCash"
                                     type="number"
                                     required
-                                    className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                                     placeholder="50000"
                                     value={formData.startingCash}
                                     onChange={onChange}
@@ -311,8 +311,8 @@ const Register = ({ setIsAuthenticated }) => {
                         </div>
 
                         {/* File Uploads */}
-                        <div className="space-y-4 pt-2 border-t border-gray-200">
-                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-gray-600">Import Data (Optional)</h3>
+                        <div className="space-y-4 pt-2 border-t border-slate-200">
+                            <h3 className="text-sm font-semibold text-textMain uppercase tracking-wide text-slate-600">Import Data (Optional)</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-textMain mb-2">Inventory CSV</label>
@@ -359,9 +359,9 @@ const Register = ({ setIsAuthenticated }) => {
 
                     {/* Divider */}
                     <div className="my-8 flex items-center">
-                        <div className="flex-grow border-t border-gray-200"></div>
-                        <span className="px-3 text-sm text-textLight">Already have an account?</span>
-                        <div className="flex-grow border-t border-gray-200"></div>
+                        <div className="flex-grow border-t border-slate-200"></div>
+                        <span className="px-3 text-sm text-slate-600">Already have an account?</span>
+                        <div className="flex-grow border-t border-slate-200"></div>
                     </div>
 
                     {/* Login Link */}

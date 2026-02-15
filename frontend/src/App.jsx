@@ -8,6 +8,8 @@ import DataEntry from "./pages/DataEntry";
 import DeadStockAlerts from "./pages/DeadStockAlerts";
 import LandingPage from "./pages/LandingPage";
 import InventoryPage from "./pages/InventoryPage";
+import PageTransition from "./components/PageTransition";
+import { ThemeProvider } from "./context/ThemeContext";
 import { useState, useEffect } from "react";
 
 const ProtectedRoute = ({ isAuthenticated, children }) => {
@@ -30,72 +32,77 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+    <ThemeProvider>
+      <Router>
+        <PageTransition>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} />
+            <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventory"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <InventoryPage />
-            </ProtectedRoute>
-          }
-        />
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <InventoryPage />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/analytics"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Analytics />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <Analytics />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/payment-radar"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <PaymentRadar />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/payment-radar"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <PaymentRadar />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/data-entry"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <DataEntry />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/data-entry"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <DataEntry />
+                </ProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/dead-stock-alerts"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <DeadStockAlerts />
-            </ProtectedRoute>
-          }
-        />
+            <Route
+              path="/dead-stock-alerts"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated}>
+                  <DeadStockAlerts />
+                </ProtectedRoute>
+              }
+            />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </PageTransition>
+      </Router>
+    </ThemeProvider>
   );
 }
 
 export default App;
+

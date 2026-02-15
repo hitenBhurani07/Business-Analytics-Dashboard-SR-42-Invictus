@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import AppNavbar from '../components/AppNavbar';
 
 const Dashboard = () => {
     const [summary, setSummary] = useState(null);
@@ -86,14 +87,14 @@ const Dashboard = () => {
     };
 
     if (loading) return (
-        <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="flex justify-center items-center h-screen bg-white">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
     );
 
     if (error) return (
-        <div className="flex justify-center items-center h-screen bg-gray-50">
-            <div className="text-red-500 font-semibold">{error}</div>
+        <div className="flex justify-center items-center h-screen bg-white">
+            <div className="text-red-600 font-semibold">{error}</div>
         </div>
     );
 
@@ -131,36 +132,10 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-24 md:pb-8 font-sans">
+        <div className="min-h-screen bg-white pb-24 md:pb-8 font-sans">
+            <AppNavbar />
 
-            {/* Top Navigation */}
-            <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">VS</div>
-                        <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vyapaar<span className="text-blue-600">Sathi</span></h1>
-                    </div>
-                    {/* <div className="flex items-center space-x-4">
-                        <Link
-                            to="/analytics"
-                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                        >
-                            Analytics
-                        </Link>
-                        <button
-                            onClick={() => {
-                                localStorage.removeItem('token');
-                                navigate('/login');
-                            }}
-                            className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
-                        >
-                            Logout
-                        </button>
-                    </div> */}
-                </div>
-            </nav>
-
-            <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+            <main className="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
                 {/* 1. Status Card */}
                 <div className={`${statusColor} rounded-2xl shadow-xl p-6 text-white transform transition-all hover:scale-[1.01]`}>
@@ -188,21 +163,21 @@ const Dashboard = () => {
 
 
                 {/* Quick Navigation Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-black">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-slate-900">
                     <button
                         onClick={() => navigate('/inventory')}
-                        className="bg-linear-to-br from-primary to-accent text-black rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 text-left group"
+                        className="bg-linear-to-br from-primary to-accent text-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 text-left group"
                     >
                         <div className="flex items-center justify-between mb-4">
                             <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-3xl">
                                 
                             </div>
-                            <svg className="w-6 h-6 text-black/80 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-6 h-6 text-white/80 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
                         <h3 className="text-xl font-bold mb-2">Smart Inventory</h3>
-                        <p className="text-black/80 text-sm">AI-powered seasonal reorder management</p>
+                        <p className="text-white/80 text-sm">AI-powered seasonal reorder management</p>
                         <div className="mt-4 flex items-center gap-2">
                             <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold"> AI Enabled</span>
                         </div>
@@ -251,8 +226,8 @@ const Dashboard = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4">
                                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                 </div>
-                                <h3 className="text-lg font-medium text-gray-900">No Active Risks</h3>
-                                <p className="text-gray-500 mt-1">Your business is operating within safe parameters.</p>
+                                <h3 className="text-lg font-medium text-slate-900">No Active Risks</h3>
+                                <p className="text-slate-600 mt-1">Your business is operating within safe parameters.</p>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -273,7 +248,7 @@ const Dashboard = () => {
                                                     }`}>
                                                     {alert.type}
                                                 </h4>
-                                                <span className="text-xs font-medium bg-white/50 px-2 py-0.5 rounded text-gray-500">Just now</span>
+                                                <span className="text-xs font-medium bg-white/50 px-2 py-0.5 rounded text-slate-600">Just now</span>
                                             </div>
                                             <p className={`mt-1 text-sm ${alert.level === 'red' ? 'text-red-700' : 'text-yellow-700'
                                                 }`}>
@@ -292,24 +267,24 @@ const Dashboard = () => {
                             <SectionHeader title="48h Cash Projection" className="mb-6" />
                             <div className="relative pt-2">
                                 <div className="flex justify-between items-end mb-2">
-                                    <span className="text-gray-500 text-sm">Now</span>
-                                    <span className="text-gray-500 text-sm">In 2 Days</span>
+                                    <span className="text-slate-600 text-sm">Now</span>
+                                    <span className="text-slate-600 text-sm">In 2 Days</span>
                                 </div>
-                                <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-4 bg-slate-200 rounded-full overflow-hidden">
                                     <div className={`h-full rounded-full transition-all duration-1000 ${cashProjection?.projectedCash < 0 ? 'bg-red-500 w-full' : 'bg-green-500'
                                         }`} style={{ width: '100%' }}></div>
                                 </div>
                                 <div className="flex justify-between items-center mt-4">
                                     <div>
-                                        <p className="text-2xl font-bold text-gray-900">${summary?.currentCash?.toLocaleString()}</p>
-                                        <p className="text-xs text-gray-500">Current Balance</p>
+                                        <p className="text-2xl font-bold text-slate-900">${summary?.currentCash?.toLocaleString()}</p>
+                                        <p className="text-xs text-slate-600">Current Balance</p>
                                     </div>
-                                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                    <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                     <div className="text-right">
                                         <p className={`text-2xl font-bold ${cashProjection?.projectedCash < 0 ? 'text-red-600' : 'text-green-600'}`}>
                                             ${cashProjection?.projectedCash?.toLocaleString()}
                                         </p>
-                                        <p className="text-xs text-gray-500">Projected</p>
+                                        <p className="text-xs text-slate-600">Projected</p>
                                     </div>
                                 </div>
                             </div>
@@ -335,31 +310,31 @@ const Dashboard = () => {
                         <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-1 rounded-full">{inventoryRisk.length} Items</span>
                     </div>
                     {inventoryRisk.length === 0 ? (
-                        <div className="p-8 text-center text-gray-500">
+                        <div className="p-8 text-center text-slate-600">
                             Excellent! No inventory items are at critical risk levels.
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50/50">
+                                <thead className="bg-slate-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Item Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Current Stock</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Burn Rate/Day</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Runway Remaining</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Item Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Current Stock</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Burn Rate/Day</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Runway Remaining</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {inventoryRisk.map((item) => (
-                                        <tr key={item._id} className="hover:bg-gray-50 transition-colors">
+                                        <tr key={item._id} className="hover:bg-slate-50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-semibold text-gray-900">{item.itemName}</div>
+                                                <div className="text-sm font-semibold text-slate-900">{item.itemName}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-500">{item.quantity} units</div>
+                                                <div className="text-sm text-slate-600">{item.quantity} units</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-500">{item.dailyUsage} units</div>
+                                                <div className="text-sm text-slate-600">{item.dailyUsage} units</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ${item.daysRemaining < 3 ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
@@ -386,7 +361,7 @@ const Dashboard = () => {
             </div>
             <div className="hidden md:block fixed bottom-8 right-8 z-50">
                 <div className="flex space-x-4">
-                    <button onClick={() => setStockOpen(true)} className="bg-gray-800 hover:bg-gray-900 text-white shadow-lg px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2">
+                    <button onClick={() => setStockOpen(true)} className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         Update Stock
                     </button>
@@ -396,19 +371,19 @@ const Dashboard = () => {
             {stockOpen && (
                 <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl shadow-lg p-6 w-96">
-                        <h4 className="text-lg font-bold text-gray-800 mb-4">Update Stock</h4>
+                        <h4 className="text-lg font-bold text-slate-900 mb-4">Update Stock</h4>
                         <div className="space-y-3">
-                            <select value={stockForm.itemName} onChange={e => setStockForm({ ...stockForm, itemName: e.target.value })} className="w-full border rounded-md px-3 py-2">
+                            <select value={stockForm.itemName} onChange={e => setStockForm({ ...stockForm, itemName: e.target.value })} className="w-full border border-gray-300 bg-white text-slate-900 rounded-md px-3 py-2">
                                 <option value="">Select Item</option>
                                 {inventoryAll.map(it => (
                                     <option key={it._id} value={it.itemName}>{it.itemName} (Stock: {it.quantity})</option>
                                 ))}
                             </select>
-                            <input type="number" value={stockForm.addQuantity} onChange={e => setStockForm({ ...stockForm, addQuantity: e.target.value })} placeholder="Add Quantity (+/-)" className="w-full border rounded-md px-3 py-2" />
+                            <input type="number" value={stockForm.addQuantity} onChange={e => setStockForm({ ...stockForm, addQuantity: e.target.value })} placeholder="Add Quantity (+/-)" className="w-full border border-gray-300 bg-white text-slate-900 rounded-md px-3 py-2" />
                         </div>
                         <div className="mt-4 flex justify-end gap-2">
-                            <button onClick={() => setStockOpen(false)} className="px-4 py-2 rounded-md border">Cancel</button>
-                            <button onClick={submitUpdateStock} className="px-4 py-2 rounded-md bg-gray-900 text-white">Save</button>
+                            <button onClick={() => setStockOpen(false)} className="px-4 py-2 rounded-md border border-gray-300 text-slate-900">Cancel</button>
+                            <button onClick={submitUpdateStock} className="px-4 py-2 rounded-md bg-slate-900 text-white">Save</button>
                         </div>
                     </div>
                 </div>
@@ -433,22 +408,22 @@ const MetricCard = ({ title, value, trend, color, icon }) => {
                 <div className={`p-2 rounded-lg ${colorClasses[color]} bg-opacity-50`}>
                     {icon}
                 </div>
-                <span className="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{trend}</span>
+                <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-1 rounded-full">{trend}</span>
             </div>
             <div>
-                <p className="text-sm font-medium text-gray-500">{title}</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+                <p className="text-sm font-medium text-slate-600">{title}</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{value}</p>
             </div>
         </div>
     );
 };
 
 const SectionHeader = ({ title, className = "mb-4" }) => (
-    <h3 className={`text-lg font-bold text-gray-800 tracking-tight ${className}`}>{title}</h3>
+    <h3 className={`text-lg font-bold text-slate-900 tracking-tight ${className}`}>{title}</h3>
 );
 
 const ActionButton = ({ icon, label, onClick }) => (
-    <button onClick={onClick} className="flex flex-col items-center justify-center text-gray-600 hover:text-blue-600 transition-colors">
+    <button onClick={onClick} className="flex flex-col items-center justify-center text-slate-600 hover:text-blue-600 transition-colors">
         <div className="mb-1">{icon}</div>
         <span className="text-xs font-medium">{label}</span>
     </button>

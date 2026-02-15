@@ -30,15 +30,15 @@ const ProblemSection = () => {
     ];
 
     return (
-        <section id="problem" className="py-20 px-4 sm:px-6 lg:px-8 bg-cardBg">
+        <section id="problem" className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
 
                 {/* Section Header */}
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-textMain mb-4">
-                        Daily Struggles of Small Business  <span className="text-danger">Owners</span>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+                        Daily Struggles of Small Business  <span className="text-red-600">Owners</span>
                     </h2>
-                    <p className="text-lg text-textLight max-w-3xl mx-auto">
+                    <p className="text-lg text-slate-600 max-w-3xl mx-auto">
                         Do you face these problems every day? You're not alone – thousands of small business owners face similar challenges daily.
                     </p>
                 </div>
@@ -48,7 +48,7 @@ const ProblemSection = () => {
                     {problems.map((problem, index) => (
                         <div
                             key={index}
-                            className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-danger"
+                            className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-red-600"
                         >
                             {/* Icon */}
                             <div className="mb-4">
@@ -56,18 +56,18 @@ const ProblemSection = () => {
                             </div>
 
                             {/* Title */}
-                            <h3 className="text-2xl font-bold text-textMain mb-3">
+                            <h3 className="text-2xl font-bold text-slate-900 mb-3 transition-colors">
                                 {problem.title}
                             </h3>
 
                             {/* Description */}
-                            <p className="text-textLight mb-4 leading-relaxed">
+                            <p className="text-slate-600 mb-4 leading-relaxed transition-colors">
                                 {problem.description}
                             </p>
 
                             {/* Example */}
-                            <div className="bg-red-50 p-4 rounded-lg border-l-2 border-danger">
-                                <p className="text-sm text-textMain italic">
+                            <div className="bg-red-50 p-4 rounded-lg border-l-2 border-red-600">
+                                <p className="text-sm text-slate-900 italic">
                                     {problem.example}
                                 </p>
                             </div>
@@ -77,10 +77,10 @@ const ProblemSection = () => {
 
                 {/* Bottom CTA */}
                 <div className="text-center mt-16 bg-gradient-to-r from-red-50 to-orange-50 p-8 rounded-xl">
-                    <h3 className="text-2xl font-bold text-textMain mb-3">
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3">
                         Do these problems seem familiar?
                     </h3>
-                    <p className="text-textLight text-lg mb-6">
+                    <p className="text-slate-600 text-lg mb-6">
                         It's time to adopt a smart solution that works for you 24/7                    </p>
                     <button className="bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-400 transition-all duration-300 shadow-lg">
                         See how VyapaarSaathi helps                    </button>

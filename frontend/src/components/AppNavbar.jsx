@@ -19,13 +19,16 @@ const AppNavbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed w-full top-0 z-50">
+    <nav className="bg-white border-b border-slate-200 fixed w-full top-0 z-50 shadow-sm transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
           {/* Logo Section */}
-          <Link to="/dashboard" className="flex items-center cursor-pointer">
-            <h1 className="text-2xl font-bold text-primary">
+          <Link to="/dashboard" className="flex items-center cursor-pointer group">
+            <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-2 rounded-lg group-hover:shadow-lg transition-shadow duration-300">
+              <h1 className="text-xl font-bold text-white">VS</h1>
+            </div>
+            <h1 className="ml-3 text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               VyapaarSathi
             </h1>
           </Link>
@@ -36,28 +39,31 @@ const AppNavbar = () => {
               <Link
                 key={link.name}
                 to={link.href}
-                className="text-textMain hover:text-primary transition-colors duration-300"
+                className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-300 relative group"
               >
                 {link.name}
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
           </div>
 
-          {/* Logout Button - Desktop */}
-          <div className="hidden md:flex space-x-4">
+          {/* Desktop Action Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 active:scale-95"
             >
               Logout
             </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-3">
+            {/* Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-textMain hover:text-primary"
+              className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors duration-300"
             >
               {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
@@ -67,29 +73,29 @@ const AppNavbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="md:hidden bg-white border-t border-slate-200 animate-slideDown">
+          <div className="px-4 pt-4 pb-6 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.href}
-                className="block px-3 py-2 text-textMain hover:text-primary hover:bg-gray-100 rounded-md"
+                className="block px-4 py-3 text-slate-700 hover:text-blue-600 hover:bg-slate-100 rounded-lg font-medium transition-colors duration-300"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.name}
               </Link>
             ))}
-            <div className="flex flex-col space-y-2 px-3 py-2">
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsMenuOpen(false);
-                }}
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg"
-              >
-                Logout
-              </button>
-            </div>
+            
+            {/* Mobile Logout Button */}
+            <button
+              onClick={() => {
+                handleLogout();
+                setIsMenuOpen(false);
+              }}
+              className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all duration-300 active:scale-95"
+            >
+              Logout
+            </button>
           </div>
         </div>
       )}
