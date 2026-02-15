@@ -93,15 +93,6 @@ function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
-        <><Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} /><Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} /><Route
-      path="/dashboard"
-      element={<ProtectedRoute isAuthenticated={isAuthenticated}>
-        <Dashboard />
-      </ProtectedRoute>} /><Route
-        path="/inventory"
-        element={<ProtectedRoute isAuthenticated={isAuthenticated}>
-          <InventoryPage />
-        </ProtectedRoute>} /></>
       </Routes>
     </Router>
   );

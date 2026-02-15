@@ -1,0 +1,22 @@
+// Email Service Stub - for development without nodemailer
+// This prevents the server from crashing due to missing nodemailer dependency
+
+const sendFinancialRiskAlert = async (data) => {
+    console.log('[EMAIL STUB] Financial risk alert for:', data.userEmail || data.email);
+    return { success: true };
+};
+
+const sendEmail = async (to, subject, text) => {
+    console.log('[EMAIL STUB] Email to:', to);
+    return { success: true };
+};
+
+const getTransporter = () => ({
+    sendMail: async (opts) => ({ messageId: 'stub' })
+});
+
+module.exports = {
+    sendEmail,
+    sendFinancialRiskAlert,
+    getTransporter
+};
