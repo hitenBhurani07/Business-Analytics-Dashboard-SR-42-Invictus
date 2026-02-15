@@ -1,10 +1,7 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const axios = require('axios');
 
 class AIService {
   constructor() {
-    this.model = genAI.getGenerativeModel({ model: "gemini-pro" });
     this.useMockData = true;
   }
 
@@ -179,10 +176,32 @@ MULTIPLIER RULES:
 For all-year items: Set spring=1.0, summer=1.0, autumn=1.0, winter=1.0, demandPattern="all-year", peakSeason="spring", lowSeason="spring"
 `;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      let text = response.text();
+      // Call Mistral API
+      const apiKey = process.env.MISTRAL_API_KEY;
+      if (!apiKey) {
+        throw new Error('MISTRAL_API_KEY environment variable not set');
+      }
 
+      const response = await axios.post(
+        'https://api.mistral.ai/v1/chat/completions',
+        {
+          model: 'mistral-small-latest',
+          messages: [{
+            role: 'user',
+            content: prompt
+          }],
+          temperature: 0.3
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 15000
+        }
+      );
+
+      let text = response.data.choices[0].message.content;
       text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       const aiAnalysis = JSON.parse(text);
 
