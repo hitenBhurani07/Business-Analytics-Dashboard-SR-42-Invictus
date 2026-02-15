@@ -31,6 +31,16 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    lastAlertSent: {
+        type: Date,
+        default: null,
+        description: 'Timestamp of last financial risk alert sent (for 24-hour cooldown)'
+    },
+    emailNotificationsEnabled: {
+        type: Boolean,
+        default: true,
+        description: 'Whether user wants to receive email alerts'
+    },
     createdAt: {
         type: Date,
         default: Date.now,
