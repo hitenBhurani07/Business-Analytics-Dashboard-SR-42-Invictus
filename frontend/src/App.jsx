@@ -3,6 +3,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
+import PaymentRadar from "./pages/PaymentRadar";
 import DataEntry from "./pages/DataEntry";
 import DeadStockAlerts from "./pages/DeadStockAlerts";
 import LandingPage from "./pages/LandingPage";
@@ -56,6 +57,15 @@ function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Analytics />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/payment-radar"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <PaymentRadar />
             </ProtectedRoute>
           }
         />
