@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import AppNavbar from '../components/AppNavbar';
+import Footer from '../components/landing/Footer';
 
 const Dashboard = ({ onLogout }) => {
     const [summary, setSummary] = useState(null);
@@ -131,36 +133,11 @@ const Dashboard = ({ onLogout }) => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-24 md:pb-8 font-sans">
+        <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+            <AppNavbar />
 
-            {/* Top Navigation */}
-            <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">VS</div>
-                        <h1 className="text-xl font-bold text-gray-900 tracking-tight">Vyapaar<span className="text-blue-600">Sathi</span></h1>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Link
-                            to="/analytics"
-                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                        >
-                            Analytics
-                        </Link>
-                        <button
-                            onClick={() => {
-                                localStorage.removeItem('token');
-                                navigate('/login');
-                            }}
-                            className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors"
-                        >
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </nav>
-
-            <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+            <main className="flex-grow pt-20 pb-24 md:pb-8">
+                <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
                 {/* 1. Status Card */}
                 <div className={`${statusColor} rounded-2xl shadow-xl p-6 text-white transform transition-all hover:scale-[1.01]`}>
@@ -351,45 +328,46 @@ const Dashboard = ({ onLogout }) => {
                     )}
                 </div>
 
-            </main>
-
-            {/* 6. Quick Action Buttons (Mobile Floating / Desktop Fixed) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 p-4 shadow-lg md:hidden z-50">
-                <div className="flex justify-around">
-                    <ActionButton icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>} label="Audit" />
-                    <ActionButton onClick={() => setStockOpen(true)} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>} label="Update Stock" />
-                </div>
-            </div>
-            <div className="hidden md:block fixed bottom-8 right-8 z-50">
-                <div className="flex space-x-4">
-                    <button onClick={() => setStockOpen(true)} className="bg-gray-800 hover:bg-gray-900 text-white shadow-lg px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                        Update Stock
-                    </button>
-                </div>
-            </div>
-
-            {stockOpen && (
-                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-lg p-6 w-96">
-                        <h4 className="text-lg font-bold text-gray-800 mb-4">Update Stock</h4>
-                        <div className="space-y-3">
-                            <select value={stockForm.itemName} onChange={e => setStockForm({ ...stockForm, itemName: e.target.value })} className="w-full border rounded-md px-3 py-2">
-                                <option value="">Select Item</option>
-                                {inventoryAll.map(it => (
-                                    <option key={it._id} value={it.itemName}>{it.itemName} (Stock: {it.quantity})</option>
-                                ))}
-                            </select>
-                            <input type="number" value={stockForm.addQuantity} onChange={e => setStockForm({ ...stockForm, addQuantity: e.target.value })} placeholder="Add Quantity (+/-)" className="w-full border rounded-md px-3 py-2" />
-                        </div>
-                        <div className="mt-4 flex justify-end gap-2">
-                            <button onClick={() => setStockOpen(false)} className="px-4 py-2 rounded-md border">Cancel</button>
-                            <button onClick={submitUpdateStock} className="px-4 py-2 rounded-md bg-gray-900 text-white">Save</button>
-                        </div>
+                {/* 6. Quick Action Buttons (Mobile Floating / Desktop Fixed) */}
+                <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-200 p-4 shadow-lg md:hidden z-50">
+                    <div className="flex justify-around">
+                        <ActionButton icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>} label="Audit" />
+                        <ActionButton onClick={() => setStockOpen(true)} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>} label="Update Stock" />
                     </div>
                 </div>
-            )}
+                <div className="hidden md:block fixed bottom-8 right-8 z-50">
+                    <div className="flex space-x-4">
+                        <button onClick={() => setStockOpen(true)} className="bg-gray-800 hover:bg-gray-900 text-white shadow-lg px-6 py-3 rounded-full font-bold transition-all transform hover:scale-105 flex items-center gap-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                            Update Stock
+                        </button>
+                    </div>
+                </div>
 
+                {stockOpen && (
+                    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-xl shadow-lg p-6 w-96">
+                            <h4 className="text-lg font-bold text-gray-800 mb-4">Update Stock</h4>
+                            <div className="space-y-3">
+                                <select value={stockForm.itemName} onChange={e => setStockForm({ ...stockForm, itemName: e.target.value })} className="w-full border rounded-md px-3 py-2">
+                                    <option value="">Select Item</option>
+                                    {inventoryAll.map(it => (
+                                        <option key={it._id} value={it.itemName}>{it.itemName} (Stock: {it.quantity})</option>
+                                    ))}
+                                </select>
+                                <input type="number" value={stockForm.addQuantity} onChange={e => setStockForm({ ...stockForm, addQuantity: e.target.value })} placeholder="Add Quantity (+/-)" className="w-full border rounded-md px-3 py-2" />
+                            </div>
+                            <div className="mt-4 flex justify-end gap-2">
+                                <button onClick={() => setStockOpen(false)} className="px-4 py-2 rounded-md border">Cancel</button>
+                                <button onClick={submitUpdateStock} className="px-4 py-2 rounded-md bg-gray-900 text-white">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+            </main>
+            
+            <Footer />
         </div>
     );
 };

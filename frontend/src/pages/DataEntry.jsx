@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import AppNavbar from '../components/AppNavbar';
+import Footer from '../components/landing/Footer';
 
 const DataEntry = () => {
     const [activeTab, setActiveTab] = useState('inventory');
     const [listening, setListening] = useState(false);
     const [transcript, setTranscript] = useState('');
+    const [processingVoice, setProcessingVoice] = useState(false);
     const recognitionRef = useRef(null);
     const navigate = useNavigate();
     
@@ -36,7 +39,6 @@ const DataEntry = () => {
             recognitionRef.current = new SpeechRecognition();
             recognitionRef.current.continuous = false;
             recognitionRef.current.interimResults = false;
-            recognitionRef.current.lang = 'en-US';
 
             recognitionRef.current.onstart = () => setListening(true);
             recognitionRef.current.onend = () => setListening(false);
@@ -96,70 +98,102 @@ const DataEntry = () => {
         }
     };
 
-    // Handle voice input processing
-    const processVoiceInput = (text) => {
+    // Process voice input via backend for intelligent extraction
+    const processVoiceInput = async (text) => {
         if (!text.trim()) {
             setError('No speech detected');
             return;
         }
 
-        // Simple voice parsing logic - can be enhanced
-        const words = text.toLowerCase().trim().split(/\s+/);
-        
-        if (activeTab === 'inventory') {
-            // Example: "add pen quantity 100 cost 5 sell 8"
-            processInventoryVoice(words);
-        } else if (activeTab === 'sales') {
-            // Example: "sell pen quantity 10 amount 80"
-            processSalesVoice(words);
-        } else if (activeTab === 'expenses') {
-            // Example: "expense rent 500 category rent"
-            processExpenseVoice(words);
+        setProcessingVoice(true);
+        try {
+            if (activeTab === 'inventory') {
+                await processInventoryVoiceWithAI(text);
+            } else if (activeTab === 'sales') {
+                await processSalesVoiceWithAI(text);
+            } else if (activeTab === 'expenses') {
+                await processExpenseVoiceWithAI(text);
+            }
+            setError('✅ Voice data processed successfully!');
+        } catch (err) {
+            console.error('Voice processing error:', err);
+            
+            if (err.response?.status === 401) {
+                setError('❌ Authentication failed. Please login again.');
+            } else if (err.response?.status === 429) {
+                setError('API rate limit exceeded. Please wait and try again.');
+            } else if (err.response?.status === 400) {
+                setError('Bad request: ' + err.response?.data?.error);
+            } else {
+                setError('Error processing voice: ' + (err.response?.data?.details || err.message));
+            }
+        } finally {
+            setProcessingVoice(false);
         }
     };
 
-    const processInventoryVoice = (words) => {
-        let newForm = { ...inventoryForm };
-        for (let i = 0; i < words.length; i++) {
-            if (words[i] === 'item' && i + 1 < words.length) {
-                newForm.itemName = words[++i];
-            } else if (words[i] === 'quantity' && i + 1 < words.length) {
-                newForm.quantity = words[++i];
-            } else if ((words[i] === 'cost' || words[i] === 'price') && i + 1 < words.length) {
-                newForm.costPrice = words[++i];
-            } else if ((words[i] === 'sell' || words[i] === 'selling') && i + 1 < words.length) {
-                newForm.sellingPrice = words[++i];
-            }
+    // Use backend API to intelligently extract inventory data via Mistral
+    const processInventoryVoiceWithAI = async (text) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/api/voice/process-inventory',
+                { text }
+            );
+
+            const extracted = response.data.data;
+            const newForm = { ...inventoryForm };
+            
+            if (extracted.itemName) newForm.itemName = extracted.itemName;
+            if (extracted.quantity) newForm.quantity = String(extracted.quantity);
+            if (extracted.costPrice) newForm.costPrice = String(extracted.costPrice);
+            if (extracted.sellingPrice) newForm.sellingPrice = String(extracted.sellingPrice);
+            
+            setInventoryForm(newForm);
+        } catch (err) {
+            throw err;
         }
-        setInventoryForm(newForm);
     };
 
-    const processSalesVoice = (words) => {
-        let newForm = { ...salesForm };
-        for (let i = 0; i < words.length; i++) {
-            if (words[i] === 'item' && i + 1 < words.length) {
-                newForm.itemName = words[++i];
-            } else if (words[i] === 'quantity' && i + 1 < words.length) {
-                newForm.quantity = words[++i];
-            } else if ((words[i] === 'amount' || words[i] === 'total') && i + 1 < words.length) {
-                newForm.totalAmount = words[++i];
-            }
+    // Use backend API to intelligently extract sales data via Mistral
+    const processSalesVoiceWithAI = async (text) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/api/voice/process-sales',
+                { text }
+            );
+
+            const extracted = response.data.data;
+            const newForm = { ...salesForm };
+            
+            if (extracted.itemName) newForm.itemName = extracted.itemName;
+            if (extracted.quantity) newForm.quantity = String(extracted.quantity);
+            if (extracted.totalAmount) newForm.totalAmount = String(extracted.totalAmount);
+            
+            setSalesForm(newForm);
+        } catch (err) {
+            throw err;
         }
-        setSalesForm(newForm);
     };
 
-    const processExpenseVoice = (words) => {
-        let newForm = { ...expenseForm };
-        for (let i = 0; i < words.length; i++) {
-            if (words[i] === 'title' && i + 1 < words.length) {
-                newForm.title = words[++i];
-            } else if (words[i] === 'amount' && i + 1 < words.length) {
-                newForm.amount = words[++i];
-            } else if (words[i] === 'category' && i + 1 < words.length) {
-                newForm.category = words[++i];
-            }
+    // Use backend API to intelligently extract expense data via Mistral
+    const processExpenseVoiceWithAI = async (text) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/api/voice/process-expenses',
+                { text }
+            );
+
+            const extracted = response.data.data;
+            const newForm = { ...expenseForm };
+            
+            if (extracted.title) newForm.title = extracted.title;
+            if (extracted.amount) newForm.amount = String(extracted.amount);
+            if (extracted.category) newForm.category = extracted.category;
+            
+            setExpenseForm(newForm);
+        } catch (err) {
+            throw err;
         }
-        setExpenseForm(newForm);
     };
 
     // Handle form submissions
@@ -261,28 +295,10 @@ const DataEntry = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header style={{backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB'}}>
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                    <h1 className="text-3xl font-bold" style={{color: '#111827'}}>Data Entry with Voice</h1>
-                    <div className="space-x-2 flex">
-                        <button
-                            onClick={() => navigate('/dashboard')}
-                            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 font-semibold transition"
-                        >
-                            ← Dashboard
-                        </button>
-                        <button
-                            onClick={() => navigate('/dead-stock-alerts')}
-                            className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 font-semibold transition"
-                        >
-                            ⚠️ Dead Stock
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main>
+        <div className="min-h-screen bg-gray-100 flex flex-col">
+            <AppNavbar />
+            
+            <main className="flex-grow pt-20">
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                     {error && (
                         <div className="mb-4 p-4 rounded" style={{backgroundColor: '#FEE2E2', borderColor: '#EF4444', border: '1px solid #EF4444', color: '#991B1B'}}>
@@ -291,27 +307,27 @@ const DataEntry = () => {
                     )}
 
                     {/* Tabs */}
-                    <div className="flex space-x-4 mb-6">
+                    <div className="flex space-x-3 mb-8 border-b border-gray-200">
                         <button
                             onClick={() => setActiveTab('inventory')}
-                            style={activeTab === 'inventory' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#111827', border: '1px solid #E5E7EB'}}
-                            className="px-6 py-2 rounded-lg font-semibold transition"
+                            style={activeTab === 'inventory' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: 'transparent', color: '#6B7280', borderBottom: '2px solid transparent'}}
+                            className="px-6 py-3 font-semibold transition-all duration-200 hover:text-textMain"
                         >
-                            📦 Inventory
+                            Inventory
                         </button>
                         <button
                             onClick={() => setActiveTab('sales')}
-                            style={activeTab === 'sales' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#111827', border: '1px solid #E5E7EB'}}
-                            className="px-6 py-2 rounded-lg font-semibold transition"
+                            style={activeTab === 'sales' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: 'transparent', color: '#6B7280', borderBottom: '2px solid transparent'}}
+                            className="px-6 py-3 font-semibold transition-all duration-200 hover:text-textMain"
                         >
-                            💰 Sales
+                            Sales
                         </button>
                         <button
                             onClick={() => setActiveTab('expenses')}
-                            style={activeTab === 'expenses' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#111827', border: '1px solid #E5E7EB'}}
-                            className="px-6 py-2 rounded-lg font-semibold transition"
+                            style={activeTab === 'expenses' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: 'transparent', color: '#6B7280', borderBottom: '2px solid transparent'}}
+                            className="px-6 py-3 font-semibold transition-all duration-200 hover:text-textMain"
                         >
-                            💸 Expenses
+                            Expenses
                         </button>
                     </div>
 
@@ -326,11 +342,12 @@ const DataEntry = () => {
 
                                     {/* Voice Input Section */}
                                     <div className="mb-8 p-4 rounded-lg" style={{backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB'}}>
-                                        <h3 className="text-lg font-semibold mb-3">🎤 Voice Input</h3>
+                                        <h3 className="text-lg font-semibold mb-3">Voice Input (Powered by OpenAI)</h3>
+                                        
                                         <div className="flex space-x-2 mb-3">
                                             <button
                                                 onClick={startListening}
-                                                disabled={listening}
+                                                disabled={listening || processingVoice}
                                                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                             >
                                                 Start Recording
@@ -344,16 +361,17 @@ const DataEntry = () => {
                                             </button>
                                             <button
                                                 onClick={() => processVoiceInput(transcript)}
-                                                disabled={!transcript}
+                                                disabled={!transcript || processingVoice}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                                             >
-                                                Process Speech
+                                                {processingVoice ? 'Processing with AI...' : 'Process Speech'}
                                             </button>
                                         </div>
                                         {listening && <p className="text-sm text-blue-600 font-semibold">Listening...</p>}
+                                        {processingVoice && <p className="text-sm text-blue-600 font-semibold">Processing with OpenAI...</p>}
                                         {transcript && <p className="text-sm text-gray-700">Heard: "{transcript}"</p>}
                                         <p className="text-xs text-gray-500 mt-2">
-                                            Try saying: "item pen quantity 100 cost 5 sell 8"
+                                            Speak naturally in any language. OpenAI will automatically extract the required information. Example: "I want to add pen items, 100 quantity, cost price 5 rupees, selling for 8"
                                         </p>
                                     </div>
 
@@ -447,11 +465,12 @@ const DataEntry = () => {
 
                                     {/* Voice Input Section */}
                                     <div className="mb-8 p-4 rounded-lg" style={{backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB'}}>
-                                        <h3 className="text-lg font-semibold mb-3">🎤 Voice Input</h3>
+                                        <h3 className="text-lg font-semibold mb-3">Voice Input (Powered by OpenAI)</h3>
+                                        
                                         <div className="flex space-x-2 mb-3">
                                             <button
                                                 onClick={startListening}
-                                                disabled={listening}
+                                                disabled={listening || processingVoice}
                                                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                             >
                                                 Start Recording
@@ -465,16 +484,17 @@ const DataEntry = () => {
                                             </button>
                                             <button
                                                 onClick={() => processVoiceInput(transcript)}
-                                                disabled={!transcript}
+                                                disabled={!transcript || processingVoice}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                                             >
-                                                Process Speech
+                                                {processingVoice ? 'Processing with AI...' : 'Process Speech'}
                                             </button>
                                         </div>
                                         {listening && <p className="text-sm text-blue-600 font-semibold">Listening...</p>}
+                                        {processingVoice && <p className="text-sm text-blue-600 font-semibold">Processing with OpenAI...</p>}
                                         {transcript && <p className="text-sm text-gray-700">Heard: "{transcript}"</p>}
                                         <p className="text-xs text-gray-500 mt-2">
-                                            Try saying: "item pen quantity 10 amount 80"
+                                            Speak naturally in any language. OpenAI will automatically extract the required information. Example: "I sold 10 pens for 80 rupees"
                                         </p>
                                     </div>
 
@@ -561,11 +581,12 @@ const DataEntry = () => {
 
                                     {/* Voice Input Section */}
                                     <div className="mb-8 p-4 rounded-lg" style={{backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB'}}>
-                                        <h3 className="text-lg font-semibold mb-3">🎤 Voice Input</h3>
+                                        <h3 className="text-lg font-semibold mb-3">Voice Input (Powered by Gemini AI)</h3>
+                                        
                                         <div className="flex space-x-2 mb-3">
                                             <button
                                                 onClick={startListening}
-                                                disabled={listening}
+                                                disabled={listening || processingVoice}
                                                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                             >
                                                 Start Recording
@@ -579,16 +600,17 @@ const DataEntry = () => {
                                             </button>
                                             <button
                                                 onClick={() => processVoiceInput(transcript)}
-                                                disabled={!transcript}
+                                                disabled={!transcript || processingVoice}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                                             >
-                                                Process Speech
+                                                {processingVoice ? 'Processing with AI...' : 'Process Speech'}
                                             </button>
                                         </div>
                                         {listening && <p className="text-sm text-blue-600 font-semibold">Listening...</p>}
+                                        {processingVoice && <p className="text-sm text-blue-600 font-semibold">Processing with OpenAI...</p>}
                                         {transcript && <p className="text-sm text-gray-700">Heard: "{transcript}"</p>}
                                         <p className="text-xs text-gray-500 mt-2">
-                                            Try saying: "title rent amount 500 category rent"
+                                            Speak naturally in any language. OpenAI will automatically extract the required information. Example: "I spent 500 rupees on rent"
                                         </p>
                                     </div>
 
@@ -678,6 +700,8 @@ const DataEntry = () => {
                     )}
                 </div>
             </main>
+            
+            <Footer />
         </div>
     );
 };

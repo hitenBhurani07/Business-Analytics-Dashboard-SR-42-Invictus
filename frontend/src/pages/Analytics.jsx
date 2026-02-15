@@ -5,6 +5,8 @@ import {
     LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import AppNavbar from '../components/AppNavbar';
+import Footer from '../components/landing/Footer';
 
 const Analytics = () => {
     const [salesData, setSalesData] = useState(null);
@@ -68,32 +70,11 @@ const Analytics = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Navigation Header */}
-            <div className="bg-white shadow-sm border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-                        <div className="flex gap-4">
-                            <Link 
-                                to="/dashboard" 
-                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
-                            >
-                                Back to Dashboard
-                            </Link>
-                            <button 
-                                onClick={fetchAnalyticsData}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                            >
-                                Refresh Data
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <AppNavbar />
+            
+            <main className="flex-grow pt-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {error && (
                     <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
                         {error}
@@ -304,7 +285,10 @@ const Analytics = () => {
                         </p>
                     </div>
                 )}
-            </div>
+                </div>
+            </main>
+            
+            <Footer />
         </div>
     );
 };

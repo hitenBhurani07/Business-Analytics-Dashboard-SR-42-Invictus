@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import AppNavbar from '../components/AppNavbar';
+import Footer from '../components/landing/Footer';
 
 const DeadStockAlerts = () => {
     const [analysis, setAnalysis] = useState(null);
@@ -53,28 +55,10 @@ const DeadStockAlerts = () => {
     };
 
     return (
-        <div className="min-h-screen">
-            <header style={{backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB'}}>
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                    <h1 className="text-3xl font-bold" style={{color: '#111827'}}>Dead Stock Alerts</h1>
-                    <div className="space-x-2 flex">
-                        <button
-                            onClick={() => navigate('/dashboard')}
-                            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 font-semibold transition"
-                        >
-                            ← Dashboard
-                        </button>
-                        <button
-                            onClick={() => navigate('/data-entry')}
-                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold transition"
-                        >
-                            📊 Data Entry
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main>
+        <div className="min-h-screen flex flex-col">
+            <AppNavbar />
+            
+            <main className="flex-grow pt-20">
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                     {error && (
                         <div className="mb-4 p-4 rounded" style={{backgroundColor: '#FEE2E2', borderColor: '#EF4444', border: '1px solid #EF4444', color: '#991B1B'}}>
@@ -94,7 +78,7 @@ const DeadStockAlerts = () => {
                                 className="px-6 py-3 text-white rounded-lg font-semibold transition disabled:opacity-50"
                                 style={{backgroundColor: '#2563EB'}}
                             >
-                                {loading ? 'Analyzing...' : '🔍 Analyze Dead Stock'}
+                                {loading ? 'Analyzing...' : 'Analyze Dead Stock'}
                             </button>
                         </div>
                     )}
@@ -112,14 +96,14 @@ const DeadStockAlerts = () => {
                                     className="px-4 py-2 text-white rounded font-semibold transition"
                                     style={{backgroundColor: '#6B7280'}}
                                 >
-                                    🔄 Run New Analysis
+                                    Run New Analysis
                                 </button>
                             </div>
 
                             {/* Dead Stock Alerts */}
                             {analysis.deadStockAlerts && analysis.deadStockAlerts.length > 0 && (
                                 <div className="mb-6">
-                                    <h3 className="text-2xl font-semibold mb-4" style={{color: '#111827'}}>⚠️ Dead Stock Items Detected</h3>
+                                    <h3 className="text-2xl font-semibold mb-4" style={{color: '#111827'}}>Dead Stock Items Detected</h3>
                                     <div className="space-y-4">
                                         {analysis.deadStockAlerts.map((alert, index) => (
                                             <div
@@ -170,7 +154,7 @@ const DeadStockAlerts = () => {
 
                             {analysis.deadStockAlerts && analysis.deadStockAlerts.length === 0 && (
                                 <div className="rounded-lg p-6 mb-6" style={{backgroundColor: '#DCFCE7', borderColor: '#10B981', border: '1px solid #10B981', color: '#166534'}}>
-                                    <h3 className="text-lg font-semibold mb-2">✅ Great News!</h3>
+                                    <h3 className="text-lg font-semibold mb-2">Great News!</h3>
                                     <p>No dead stock detected. Your inventory is selling well!</p>
                                 </div>
                             )}
@@ -230,7 +214,7 @@ const DeadStockAlerts = () => {
 
                     {loading && (
                         <div className="bg-white shadow rounded-lg p-6 text-center">
-                            <p className="text-lg text-gray-600 mb-4">🤖 AI is analyzing your inventory...</p>
+                            <p className="text-lg text-gray-600 mb-4">AI is analyzing your inventory...</p>
                             <div className="flex justify-center">
                                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                             </div>
@@ -238,6 +222,8 @@ const DeadStockAlerts = () => {
                     )}
                 </div>
             </main>
+            
+            <Footer />
         </div>
     );
 };
