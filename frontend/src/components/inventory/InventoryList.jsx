@@ -75,12 +75,12 @@ const InventoryList = () => {
   return (
     <div className="space-y-4">
       {inventory.map((item) => (
-        <div 
+        <div
           key={item._id}
           className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+
             {/* Left: Item Info */}
             <div className="lg:col-span-1">
               <div className="flex items-start justify-between mb-3">
@@ -110,7 +110,7 @@ const InventoryList = () => {
 
               {item.needsReorder && (
                 <div className="mt-4 bg-danger/10 border border-danger/30 rounded-lg p-3 flex items-center gap-2">
-                  <FiAlertCircle className="text-danger flex-shrink-0" />
+                  <FiAlertCircle className="text-danger shrink-0" />
                   <span className="text-sm text-danger font-semibold">Reorder Needed!</span>
                 </div>
               )}
@@ -124,34 +124,48 @@ const InventoryList = () => {
               </h4>
               <div className="grid grid-cols-2 gap-3">
                 {Object.entries(item.seasonalMultipliers || {}).map(([season, multiplier]) => {
-                  // Highlight logic based on demand pattern
-                  let isHighlighted = false;
-                  let highlightColor = 'bg-white border-gray-200';
-                  
-                  if (item.aiInsights?.demandPattern === 'all-year') {
-                    // All-year items: highlight all seasons equally with info color
-                    isHighlighted = true;
-                    highlightColor = 'bg-info/10 border-info';
-                  } else if (item.aiInsights?.demandPattern === 'high' && season === item.aiInsights?.peakSeason) {
-                    // High demand: highlight peak season
-                    isHighlighted = true;
-                    highlightColor = 'bg-success/10 border-success';
-                  } else if (item.aiInsights?.demandPattern === 'low' && season === item.aiInsights?.lowSeason) {
-                    // Low demand: highlight low season
-                    isHighlighted = true;
-                    highlightColor = 'bg-danger/10 border-danger';
-                  }
-                  
+                  const isCurrentSeason = season === item.currentSeason;
                   const isTrending = multiplier > 1.2 ? 'up' : multiplier < 0.8 ? 'down' : 'stable';
-                  
+
+                  // Smart highlighting logic with correct priority
+                  // Smart highlighting logic - PRIORITY ORDER MATTERS!
+                  let highlightColor = 'bg-white border-gray-200';
+
+                  if (item.aiInsights?.demandPattern === 'all-year') {
+                    // All-year items: ALL seasons BLUE
+                    highlightColor = 'bg-blue-50 border-blue-300';
+                  } else {
+                    // Seasonal items: Peak/Low takes priority over current
+                    const isPeakSeason = season === item.aiInsights?.peakSeason;
+                    const isLowSeason = season === item.aiInsights?.lowSeason;
+
+                    if (isPeakSeason && isCurrentSeason) {
+                      // Peak + Current: GREEN with strong ring
+                      highlightColor = 'bg-green-100 border-green-500 ring-4 ring-green-300';
+                    } else if (isPeakSeason) {
+                      // Peak only: GREEN
+                      highlightColor = 'bg-green-100 border-green-400';
+                    } else if (isLowSeason && isCurrentSeason) {
+                      // Low + Current: RED with strong ring
+                      highlightColor = 'bg-red-100 border-red-500 ring-4 ring-red-300';
+                    } else if (isLowSeason) {
+                      // Low only: RED  
+                      highlightColor = 'bg-red-100 border-red-400';
+                    } else if (isCurrentSeason) {
+                      // Current only (neither peak nor low): BLUE with ring
+                      highlightColor = 'bg-blue-50 border-blue-400 ring-2 ring-blue-300';
+                    }
+                  }
+
                   return (
-                    <div 
+                    <div
                       key={season}
                       className={`p-3 rounded-lg border transition-all ${highlightColor}`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-semibold text-textLight capitalize">
+                        <span className="text-xs font-semibold text-textLight capitalize flex items-center gap-1">
                           {getSeasonIcon(season)} {season}
+                          {isCurrentSeason && <span className="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full">Now</span>}
                         </span>
                         {isTrending === 'up' && <FiTrendingUp className="text-success text-sm" />}
                         {isTrending === 'down' && <FiTrendingDown className="text-danger text-sm" />}
@@ -174,23 +188,22 @@ const InventoryList = () => {
                   {item.aiInsights.recommendations}
                 </p>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className={`px-2 py-1 rounded-full font-semibold ${
-                    item.aiInsights.demandPattern === 'high' 
-                      ? 'bg-success/20 text-success' 
-                      : item.aiInsights.demandPattern === 'low'
+                  <span className={`px-2 py-1 rounded-full font-semibold ${item.aiInsights.demandPattern === 'high'
+                    ? 'bg-success/20 text-success'
+                    : item.aiInsights.demandPattern === 'low'
                       ? 'bg-danger/20 text-danger'
                       : item.aiInsights.demandPattern === 'all-year'
-                      ? 'bg-info/20 text-info'
-                      : 'bg-warning/20 text-warning'
-                  }`}>
-                    {item.aiInsights.demandPattern === 'high' 
-                      ? ` Peak: ${item.aiInsights.peakSeason}` 
-                      : item.aiInsights.demandPattern === 'low' 
-                      ? ` Low: ${item.aiInsights.lowSeason}`
-                      : item.aiInsights.demandPattern === 'all-year'
-                      ? ' All-year item'
-                      : '↔ Medium demand'
-                    } 
+                        ? 'bg-info/20 text-info'
+                        : 'bg-warning/20 text-warning'
+                    }`}>
+                    {item.aiInsights.demandPattern === 'high'
+                      ? ` Peak: ${item.aiInsights.peakSeason}`
+                      : item.aiInsights.demandPattern === 'low'
+                        ? ` Low: ${item.aiInsights.lowSeason}`
+                        : item.aiInsights.demandPattern === 'all-year'
+                          ? ' All-year item'
+                          : '↔ Medium demand'
+                    }
                   </span>
                   <span className="text-textLight">
                     • Analyzed {new Date(item.aiInsights.lastAnalyzed).toLocaleDateString()}
@@ -199,7 +212,7 @@ const InventoryList = () => {
               </div>
             )}
           </div>
-```        </div>
+        </div>
       ))}
     </div>
   );

@@ -46,21 +46,21 @@ const SolutionSection = () => {
   ];
 
   return (
-    <section id="solution" className="py-1 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="solution" className="py-1 px-4 sm:px-6 lg:px-8 bg-white transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center px-4 py-2 bg-green-100 rounded-full mb-4">
-            <span className="text-success font-semibold text-sm">
+            <span className="text-green-600 font-semibold text-sm">
               Smart Solution
             </span>
           </div>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-textMain mb-4">
-            VyapaarSathi: Your <span className="text-primary">24/7 Operations Manager</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+            VyapaarSathi: Your <span className="text-blue-600">24/7 Operations Manager</span>
           </h2>
-          <p className="text-lg text-textLight max-w-3xl mx-auto">
+          <p className="text-lg text-slate-600 max-w-3xl mx-auto">
             An intelligent assistant that continuously monitors, predicts problems, and automatically handles routine operations – just like you're an experienced manager!
           </p>
         </div>
@@ -69,49 +69,49 @@ const SolutionSection = () => {
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-2xl mb-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="text-2xl font-bold text-textMain mb-4">
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">
                 Before VyapaarSaathi 
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
-                  <span className="text-danger text-xl">✗</span>
-                  <span className="text-textLight">Everything had to be tracked manually.</span>
+                  <span className="text-red-600 text-xl">✗</span>
+                  <span className="text-slate-600">Everything had to be tracked manually.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-danger text-xl">✗</span>
-                  <span className="text-textLight">Problems become apparent when it is already late.</span>
+                  <span className="text-red-600 text-xl">✗</span>
+                  <span className="text-slate-600">Problems become apparent when it is already late.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-danger text-xl">✗</span>
-                  <span className="text-textLight">Reactive mode constantly firefighting</span>
+                  <span className="text-red-600 text-xl">✗</span>
+                  <span className="text-slate-600">Reactive mode constantly firefighting</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-danger text-xl">✗</span>
-                  <span className="text-textLight">There is no time to think about growth.</span>
+                  <span className="text-red-600 text-xl">✗</span>
+                  <span className="text-slate-600">There is no time to think about growth.</span>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold text-textMain mb-4">
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">
                 With VyapaarSaathi 
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-3">
-                  <span className="text-success text-xl">✓</span>
-                  <span className="text-textLight">Automatic monitoring aur tracking</span>
+                  <span className="text-green-600 text-xl">✓</span>
+                  <span className="text-slate-600">Automatic monitoring aur tracking</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-success text-xl">✓</span>
-                  <span className="text-textLight">Alerts and solutions before problems arise</span>
+                  <span className="text-green-600 text-xl">✓</span>
+                  <span className="text-slate-600">Alerts and solutions before problems arise</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-success text-xl">✓</span>
-                  <span className="text-textLight">Proactive decisions and smart planning</span>
+                  <span className="text-green-600 text-xl">✓</span>
+                  <span className="text-slate-600">Proactive decisions and smart planning</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-success text-xl">✓</span>
-                  <span className="text-textLight">Focus on strategy aur business growth</span>
+                  <span className="text-green-600 text-xl">✓</span>
+                  <span className="text-slate-600">Focus on strategy aur business growth</span>
                 </li>
               </ul>
             </div>
@@ -123,7 +123,7 @@ const SolutionSection = () => {
           {solutions.map((solution, index) => (
             <div 
               key={index}
-              className="bg-cardBg p-8 rounded-xl hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-primary"
+              className="bg-slate-50 p-8 rounded-xl hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-blue-600"
             >
               {/* Icon */}
               <div className="mb-6">
@@ -131,12 +131,12 @@ const SolutionSection = () => {
               </div>
 
               {/* Title */}
-              <h3 className="text-2xl font-bold text-textMain mb-3">
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">
                 {solution.title}
               </h3>
 
               {/* Description */}
-              <p className="text-textLight mb-6 leading-relaxed">
+              <p className="text-slate-600 mb-6 leading-relaxed">
                 {solution.description}
               </p>
 
@@ -144,8 +144,8 @@ const SolutionSection = () => {
               <div className="space-y-2">
                 {solution.benefits.map((benefit, idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <FiCheckCircle className="text-success flex-shrink-0" />
-                    <span className="text-sm text-textLight">{benefit}</span>
+                    <FiCheckCircle className="text-green-600 flex-shrink-0" />
+                    <span className="text-sm text-slate-600">{benefit}</span>
                   </div>
                 ))}
               </div>

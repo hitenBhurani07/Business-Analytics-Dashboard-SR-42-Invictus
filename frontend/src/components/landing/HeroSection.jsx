@@ -3,26 +3,26 @@ import { FiArrowRight, FiPlay } from 'react-icons/fi';
 
 const HeroSection = () => {
   return (
-    <section id="home" className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <section id="home" className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-100 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="text-center">
           
           {/* Badge/Tag Line */}
-          <div className="inline-flex items-center px-4 py-2 bg-white rounded-full shadow-sm mb-6">
-            <span className="text-accent font-semibold text-sm">
+          <div className="inline-flex items-center px-4 py-2 bg-white rounded-full shadow-sm mb-6 transition-colors">
+            <span className="text-blue-600 font-semibold text-sm">
               Small Business Operations Simplified
             </span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-textMain mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
             Smarter Operations. Stronger Business.
             <br />
                 
           </h1>
 
           {/* Description */}
-          <p className="text-lg sm:text-xl text-textLight max-w-3xl mx-auto mb-10">
+          <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto mb-10">
             Stop firefighting daily operations. VyapaarSaathi monitors, predicts, and automates 
             routine business decisions so you can focus on growth, not just survival.
           </p>
@@ -44,17 +44,17 @@ const HeroSection = () => {
 
           {/* Stats Section (optional - business credibility ke liye) */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto ">
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-3xl font-bold text-primary mb-2">80%</h3>
-              <p className="text-textLight">Time Saved on Operations</p>
+            <div className="bg-white p-6 rounded-xl shadow-md transition-colors">
+              <h3 className="text-3xl font-bold text-blue-600 mb-2">80%</h3>
+              <p className="text-slate-600">Time Saved on Operations</p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-3xl font-bold text-secondary mb-2">0 Missed Alerts</h3>
-              <p className="text-textLight">Proactive Risk Detection</p>
+            <div className="bg-white p-6 rounded-xl shadow-md transition-colors">
+              <h3 className="text-3xl font-bold text-green-600 mb-2">0 Missed Alerts</h3>
+              <p className="text-slate-600">Proactive Risk Detection</p>
             </div>
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h3 className="text-3xl font-bold text-accent mb-2">24/7</h3>
-              <p className="text-textLight">Always-On Monitoring</p>
+            <div className="bg-white p-6 rounded-xl shadow-md transition-colors">
+              <h3 className="text-3xl font-bold text-orange-600 mb-2">24/7</h3>
+              <p className="text-slate-600">Always-On Monitoring</p>
             </div>
           </div>
 

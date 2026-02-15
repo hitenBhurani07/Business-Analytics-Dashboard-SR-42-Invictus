@@ -41,7 +41,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className="bg-[#000047] text-white">
+        <footer className="bg-slate-900 text-white transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
                 {/* Main Footer Content */}
@@ -49,8 +49,8 @@ const Footer = () => {
 
                     {/* Company Info */}
                     <div className="lg:col-span-2">
-                        <h3 className="text-3xl font-bold text-primary mb-4">VyapaarSaathi</h3>
-                        <p className="text-gray-300 mb-6 leading-relaxed">
+                        <h3 className="text-3xl font-bold text-blue-400 mb-4">VyapaarSaathi</h3>
+                        <p className="text-slate-300 mb-6 leading-relaxed">
                             AI-powered operations assistant for small businesses.
                             24/7 monitoring, smart alerts, and automated decision-making –
                             All in one platform!
@@ -59,20 +59,20 @@ const Footer = () => {
                         {/* Contact Info */}
                         <div className="space-y-3">
                             <div className="flex items-start gap-3">
-                                <FiMail className="text-secondary mt-1 flex-shrink-0" />
-                                <a href="mailto:support@opsagent.com" className="text-gray-300 hover:text-secondary transition-colors">
+                                <FiMail className="text-green-400 mt-1 flex-shrink-0" />
+                                <a href="mailto:support@opsagent.com" className="text-slate-300 hover:text-green-400 transition-colors">
                                     support@vyapaarsaathi.com
                                 </a>
                             </div>
                             <div className="flex items-start gap-3">
-                                <FiPhone className="text-secondary mt-1 flex-shrink-0" />
-                                <a href="tel:+911234567890" className="text-gray-300 hover:text-secondary transition-colors">
+                                <FiPhone className="text-green-400 mt-1 flex-shrink-0" />
+                                <a href="tel:+911234567890" className="text-slate-300 hover:text-green-400 transition-colors">
                                     +91 123-456-7890
                                 </a>
                             </div>
                             <div className="flex items-start gap-3">
-                                <FiMapPin className="text-secondary mt-1 flex-shrink-0" />
-                                <span className="text-gray-300">
+                                <FiMapPin className="text-green-400 mt-1 flex-shrink-0" />
+                                <span className="text-slate-300">
                                     Mumbai, Maharashtra, India
                                 </span>
                             </div>

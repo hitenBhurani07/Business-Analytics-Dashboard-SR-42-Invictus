@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import AppNavbar from '../components/AppNavbar';
+import Footer from '../components/landing/Footer';
 
 const DataEntry = () => {
     const [activeTab, setActiveTab] = useState('inventory');
     const [listening, setListening] = useState(false);
     const [transcript, setTranscript] = useState('');
+    const [processingVoice, setProcessingVoice] = useState(false);
     const recognitionRef = useRef(null);
     const navigate = useNavigate();
     
@@ -36,7 +39,6 @@ const DataEntry = () => {
             recognitionRef.current = new SpeechRecognition();
             recognitionRef.current.continuous = false;
             recognitionRef.current.interimResults = false;
-            recognitionRef.current.lang = 'en-US';
 
             recognitionRef.current.onstart = () => setListening(true);
             recognitionRef.current.onend = () => setListening(false);
@@ -96,70 +98,102 @@ const DataEntry = () => {
         }
     };
 
-    // Handle voice input processing
-    const processVoiceInput = (text) => {
+    // Process voice input via backend for intelligent extraction
+    const processVoiceInput = async (text) => {
         if (!text.trim()) {
             setError('No speech detected');
             return;
         }
 
-        // Simple voice parsing logic - can be enhanced
-        const words = text.toLowerCase().trim().split(/\s+/);
-        
-        if (activeTab === 'inventory') {
-            // Example: "add pen quantity 100 cost 5 sell 8"
-            processInventoryVoice(words);
-        } else if (activeTab === 'sales') {
-            // Example: "sell pen quantity 10 amount 80"
-            processSalesVoice(words);
-        } else if (activeTab === 'expenses') {
-            // Example: "expense rent 500 category rent"
-            processExpenseVoice(words);
+        setProcessingVoice(true);
+        try {
+            if (activeTab === 'inventory') {
+                await processInventoryVoiceWithAI(text);
+            } else if (activeTab === 'sales') {
+                await processSalesVoiceWithAI(text);
+            } else if (activeTab === 'expenses') {
+                await processExpenseVoiceWithAI(text);
+            }
+            setError('Voice data processed successfully!');
+        } catch (err) {
+            console.error('Voice processing error:', err);
+            
+            if (err.response?.status === 401) {
+                setError('Authentication failed. Please login again.');
+            } else if (err.response?.status === 429) {
+                setError('API rate limit exceeded. Please wait and try again.');
+            } else if (err.response?.status === 400) {
+                setError('Bad request: ' + err.response?.data?.error);
+            } else {
+                setError('Error processing voice: ' + (err.response?.data?.details || err.message));
+            }
+        } finally {
+            setProcessingVoice(false);
         }
     };
 
-    const processInventoryVoice = (words) => {
-        let newForm = { ...inventoryForm };
-        for (let i = 0; i < words.length; i++) {
-            if (words[i] === 'item' && i + 1 < words.length) {
-                newForm.itemName = words[++i];
-            } else if (words[i] === 'quantity' && i + 1 < words.length) {
-                newForm.quantity = words[++i];
-            } else if ((words[i] === 'cost' || words[i] === 'price') && i + 1 < words.length) {
-                newForm.costPrice = words[++i];
-            } else if ((words[i] === 'sell' || words[i] === 'selling') && i + 1 < words.length) {
-                newForm.sellingPrice = words[++i];
-            }
+    // Use backend API to intelligently extract inventory data via Mistral
+    const processInventoryVoiceWithAI = async (text) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/api/voice/process-inventory',
+                { text }
+            );
+
+            const extracted = response.data.data;
+            const newForm = { ...inventoryForm };
+            
+            if (extracted.itemName) newForm.itemName = extracted.itemName;
+            if (extracted.quantity) newForm.quantity = String(extracted.quantity);
+            if (extracted.costPrice) newForm.costPrice = String(extracted.costPrice);
+            if (extracted.sellingPrice) newForm.sellingPrice = String(extracted.sellingPrice);
+            
+            setInventoryForm(newForm);
+        } catch (err) {
+            throw err;
         }
-        setInventoryForm(newForm);
     };
 
-    const processSalesVoice = (words) => {
-        let newForm = { ...salesForm };
-        for (let i = 0; i < words.length; i++) {
-            if (words[i] === 'item' && i + 1 < words.length) {
-                newForm.itemName = words[++i];
-            } else if (words[i] === 'quantity' && i + 1 < words.length) {
-                newForm.quantity = words[++i];
-            } else if ((words[i] === 'amount' || words[i] === 'total') && i + 1 < words.length) {
-                newForm.totalAmount = words[++i];
-            }
+    // Use backend API to intelligently extract sales data via Mistral
+    const processSalesVoiceWithAI = async (text) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/api/voice/process-sales',
+                { text }
+            );
+
+            const extracted = response.data.data;
+            const newForm = { ...salesForm };
+            
+            if (extracted.itemName) newForm.itemName = extracted.itemName;
+            if (extracted.quantity) newForm.quantity = String(extracted.quantity);
+            if (extracted.totalAmount) newForm.totalAmount = String(extracted.totalAmount);
+            
+            setSalesForm(newForm);
+        } catch (err) {
+            throw err;
         }
-        setSalesForm(newForm);
     };
 
-    const processExpenseVoice = (words) => {
-        let newForm = { ...expenseForm };
-        for (let i = 0; i < words.length; i++) {
-            if (words[i] === 'title' && i + 1 < words.length) {
-                newForm.title = words[++i];
-            } else if (words[i] === 'amount' && i + 1 < words.length) {
-                newForm.amount = words[++i];
-            } else if (words[i] === 'category' && i + 1 < words.length) {
-                newForm.category = words[++i];
-            }
+    // Use backend API to intelligently extract expense data via Mistral
+    const processExpenseVoiceWithAI = async (text) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:5000/api/voice/process-expenses',
+                { text }
+            );
+
+            const extracted = response.data.data;
+            const newForm = { ...expenseForm };
+            
+            if (extracted.title) newForm.title = extracted.title;
+            if (extracted.amount) newForm.amount = String(extracted.amount);
+            if (extracted.category) newForm.category = extracted.category;
+            
+            setExpenseForm(newForm);
+        } catch (err) {
+            throw err;
         }
-        setExpenseForm(newForm);
     };
 
     // Handle form submissions
@@ -261,76 +295,68 @@ const DataEntry = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header style={{backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB'}}>
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                    <h1 className="text-3xl font-bold" style={{color: '#111827'}}>Data Entry with Voice</h1>
-                    <div className="space-x-2 flex">
-                        <button
-                            onClick={() => navigate('/dashboard')}
-                            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 font-semibold transition"
-                        >
-                            ← Dashboard
-                        </button>
-                        <button
-                            onClick={() => navigate('/dead-stock-alerts')}
-                            className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 font-semibold transition"
-                        >
-                            ⚠️ Dead Stock
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main>
+        <div className="min-h-screen bg-white flex flex-col">
+            <AppNavbar />
+            
+            <main className="flex-grow pt-20">
                 <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                     {error && (
-                        <div className="mb-4 p-4 rounded" style={{backgroundColor: '#FEE2E2', borderColor: '#EF4444', border: '1px solid #EF4444', color: '#991B1B'}}>
+                        <div className="mb-4 p-4 rounded bg-red-50 border border-red-500 text-red-900">
                             {error}
                         </div>
                     )}
 
                     {/* Tabs */}
-                    <div className="flex space-x-4 mb-6">
+                    <div className="flex space-x-3 mb-8 border-b border-gray-200">
                         <button
                             onClick={() => setActiveTab('inventory')}
-                            style={activeTab === 'inventory' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#111827', border: '1px solid #E5E7EB'}}
-                            className="px-6 py-2 rounded-lg font-semibold transition"
+                            className={`px-6 py-3 font-semibold transition-all duration-200 ${
+                                activeTab === 'inventory'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-transparent text-slate-600 border-b-2 border-transparent hover:text-slate-900'
+                            }`}
                         >
-                            📦 Inventory
+                            Inventory
                         </button>
                         <button
                             onClick={() => setActiveTab('sales')}
-                            style={activeTab === 'sales' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#111827', border: '1px solid #E5E7EB'}}
-                            className="px-6 py-2 rounded-lg font-semibold transition"
+                            className={`px-6 py-3 font-semibold transition-all duration-200 ${
+                                activeTab === 'sales'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-transparent text-slate-600 border-b-2 border-transparent hover:text-slate-900'
+                            }`}
                         >
-                            💰 Sales
+                            Sales
                         </button>
                         <button
                             onClick={() => setActiveTab('expenses')}
-                            style={activeTab === 'expenses' ? {backgroundColor: '#2563EB', color: '#FFFFFF'} : {backgroundColor: '#FFFFFF', color: '#111827', border: '1px solid #E5E7EB'}}
-                            className="px-6 py-2 rounded-lg font-semibold transition"
+                            className={`px-6 py-3 font-semibold transition-all duration-200 ${
+                                activeTab === 'expenses'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-transparent text-slate-600 border-b-2 border-transparent hover:text-slate-900'
+                            }`}
                         >
-                            💸 Expenses
+                            Expenses
                         </button>
                     </div>
 
                     {loading ? (
-                        <div className="text-center py-6">Loading...</div>
+                        <div className="text-center py-6 text-slate-900">Loading...</div>
                     ) : (
                         <>
                             {/* INVENTORY TAB */}
                             {activeTab === 'inventory' && (
-                                <div className="shadow rounded-lg p-6" style={{backgroundColor: '#FFFFFF'}}>
-                                    <h2 className="text-2xl font-semibold mb-6" style={{color: '#111827'}}>Inventory Management</h2>
+                                <div className="shadow rounded-lg p-6 bg-white">
+                                    <h2 className="text-2xl font-semibold mb-6 text-slate-900">Inventory Management</h2>
 
                                     {/* Voice Input Section */}
-                                    <div className="mb-8 p-4 rounded-lg" style={{backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB'}}>
-                                        <h3 className="text-lg font-semibold mb-3">🎤 Voice Input</h3>
+                                    <div className="mb-8 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                                        <h3 className="text-lg font-semibold mb-3 text-slate-900">Voice Input (Powered by OpenAI)</h3>
+                                        
                                         <div className="flex space-x-2 mb-3">
                                             <button
                                                 onClick={startListening}
-                                                disabled={listening}
+                                                disabled={listening || processingVoice}
                                                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                             >
                                                 Start Recording
@@ -344,55 +370,55 @@ const DataEntry = () => {
                                             </button>
                                             <button
                                                 onClick={() => processVoiceInput(transcript)}
-                                                disabled={!transcript}
+                                                disabled={!transcript || processingVoice}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                                             >
-                                                Process Speech
+                                                {processingVoice ? 'Processing with AI...' : 'Process Speech'}
                                             </button>
                                         </div>
                                         {listening && <p className="text-sm text-blue-600 font-semibold">Listening...</p>}
-                                        {transcript && <p className="text-sm text-gray-700">Heard: "{transcript}"</p>}
-                                        <p className="text-xs text-gray-500 mt-2">
-                                            Try saying: "item pen quantity 100 cost 5 sell 8"
+                                        {processingVoice && <p className="text-sm text-blue-600 font-semibold">Processing with OpenAI...</p>}
+                                        {transcript && <p className="text-sm text-slate-900">Heard: "{transcript}"</p>}
+                                        <p className="text-xs text-slate-600 mt-2">
+                                            Speak naturally in any language. OpenAI will automatically extract the required information. Example: "I want to add pen items, 100 quantity, cost price 5 rupees, selling for 8"
                                         </p>
                                     </div>
 
                                     {/* Form */}
-                                    <form onSubmit={handleInventorySubmit} className="mb-8 p-4 bg-gray-50 rounded-lg">
+                                    <form onSubmit={handleInventorySubmit} className="mb-8 p-4 bg-slate-50 rounded-lg">
                                         <div className="grid grid-cols-2 gap-4">
                                             <input
                                                 type="text"
                                                 placeholder="Item Name"
                                                 value={inventoryForm.itemName}
                                                 onChange={(e) => setInventoryForm({ ...inventoryForm, itemName: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                             <input
                                                 type="number"
                                                 placeholder="Quantity"
                                                 value={inventoryForm.quantity}
                                                 onChange={(e) => setInventoryForm({ ...inventoryForm, quantity: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                             <input
                                                 type="number"
                                                 placeholder="Cost Price"
                                                 value={inventoryForm.costPrice}
                                                 onChange={(e) => setInventoryForm({ ...inventoryForm, costPrice: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                             <input
                                                 type="number"
                                                 placeholder="Selling Price"
                                                 value={inventoryForm.sellingPrice}
                                                 onChange={(e) => setInventoryForm({ ...inventoryForm, sellingPrice: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                         </div>
                                         <button
                                             type="submit"
-                                            className="mt-4 w-full px-4 py-2 text-white rounded font-semibold"
-                                            style={{backgroundColor: '#2563EB'}}
+                                            className="mt-4 w-full px-4 py-2 text-white rounded font-semibold bg-blue-600 hover:bg-blue-700"
                                         >
                                             {editingId && editingType === 'inventory' ? 'Update Inventory' : 'Add Inventory'}
                                         </button>
@@ -401,7 +427,7 @@ const DataEntry = () => {
                                     {/* Table */}
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
-                                            <thead className="bg-gray-100 border-b">
+                                            <thead className="bg-slate-100 border-b text-slate-900">
                                                 <tr>
                                                     <th className="px-4 py-2 text-left">Item Name</th>
                                                     <th className="px-4 py-2 text-left">Quantity</th>
@@ -412,7 +438,7 @@ const DataEntry = () => {
                                             </thead>
                                             <tbody>
                                                 {inventory.map((item) => (
-                                                    <tr key={item._id} className="border-b hover:bg-gray-50">
+                                                    <tr key={item._id} className="border-b hover:bg-slate-50 transition-colors">
                                                         <td className="px-4 py-2">{item.itemName}</td>
                                                         <td className="px-4 py-2">{item.quantity}</td>
                                                         <td className="px-4 py-2">${item.costPrice}</td>
@@ -435,23 +461,24 @@ const DataEntry = () => {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        {inventory.length === 0 && <p className="text-center py-4 text-gray-500">No inventory records</p>}
+                                        {inventory.length === 0 && <p className="text-center py-4 text-slate-600">No inventory records</p>}
                                     </div>
                                 </div>
                             )}
 
                             {/* SALES TAB */}
                             {activeTab === 'sales' && (
-                                <div className="shadow rounded-lg p-6" style={{backgroundColor: '#FFFFFF'}}>
-                                    <h2 className="text-2xl font-semibold mb-6" style={{color: '#111827'}}>Sales Management</h2>
+                                <div className="shadow rounded-lg p-6 bg-white">
+                                    <h2 className="text-2xl font-semibold mb-6 text-slate-900">Sales Management</h2>
 
                                     {/* Voice Input Section */}
-                                    <div className="mb-8 p-4 rounded-lg" style={{backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB'}}>
-                                        <h3 className="text-lg font-semibold mb-3">🎤 Voice Input</h3>
+                                    <div className="mb-8 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                                        <h3 className="text-lg font-semibold mb-3 text-slate-900">Voice Input (Powered by OpenAI)</h3>
+                                        
                                         <div className="flex space-x-2 mb-3">
                                             <button
                                                 onClick={startListening}
-                                                disabled={listening}
+                                                disabled={listening || processingVoice}
                                                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                             >
                                                 Start Recording
@@ -465,48 +492,48 @@ const DataEntry = () => {
                                             </button>
                                             <button
                                                 onClick={() => processVoiceInput(transcript)}
-                                                disabled={!transcript}
+                                                disabled={!transcript || processingVoice}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                                             >
-                                                Process Speech
+                                                {processingVoice ? 'Processing with AI...' : 'Process Speech'}
                                             </button>
                                         </div>
                                         {listening && <p className="text-sm text-blue-600 font-semibold">Listening...</p>}
-                                        {transcript && <p className="text-sm text-gray-700">Heard: "{transcript}"</p>}
-                                        <p className="text-xs text-gray-500 mt-2">
-                                            Try saying: "item pen quantity 10 amount 80"
+                                        {processingVoice && <p className="text-sm text-blue-600 font-semibold">Processing with OpenAI...</p>}
+                                        {transcript && <p className="text-sm text-slate-900">Heard: "{transcript}"</p>}
+                                        <p className="text-xs text-slate-600 mt-2">
+                                            Speak naturally in any language. OpenAI will automatically extract the required information. Example: "I sold 10 pens for 80 rupees"
                                         </p>
                                     </div>
 
                                     {/* Form */}
-                                    <form onSubmit={handleSalesSubmit} className="mb-8 p-4 bg-gray-50 rounded-lg">
+                                    <form onSubmit={handleSalesSubmit} className="mb-8 p-4 bg-slate-50 rounded-lg">
                                         <div className="grid grid-cols-3 gap-4">
                                             <input
                                                 type="text"
                                                 placeholder="Item Name"
                                                 value={salesForm.itemName}
                                                 onChange={(e) => setSalesForm({ ...salesForm, itemName: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                             <input
                                                 type="number"
                                                 placeholder="Quantity"
                                                 value={salesForm.quantity}
                                                 onChange={(e) => setSalesForm({ ...salesForm, quantity: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                             <input
                                                 type="number"
                                                 placeholder="Total Amount"
                                                 value={salesForm.totalAmount}
                                                 onChange={(e) => setSalesForm({ ...salesForm, totalAmount: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                         </div>
                                         <button
                                             type="submit"
-                                            className="mt-4 w-full px-4 py-2 text-white rounded font-semibold"
-                                            style={{backgroundColor: '#2563EB'}}
+                                            className="mt-4 w-full px-4 py-2 text-white rounded font-semibold bg-blue-600 hover:bg-blue-700"
                                         >
                                             {editingId && editingType === 'sales' ? 'Update Sales' : 'Add Sales'}
                                         </button>
@@ -515,7 +542,7 @@ const DataEntry = () => {
                                     {/* Table */}
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
-                                            <thead className="border-b" style={{backgroundColor: '#F9FAFB'}}>
+                                            <thead className="border-b bg-slate-100 text-slate-900">
                                                 <tr>
                                                     <th className="px-4 py-2 text-left">Item Name</th>
                                                     <th className="px-4 py-2 text-left">Quantity</th>
@@ -526,7 +553,7 @@ const DataEntry = () => {
                                             </thead>
                                             <tbody>
                                                 {sales.map((item) => (
-                                                    <tr key={item._id} className="border-b hover:bg-gray-50">
+                                                    <tr key={item._id} className="border-b hover:bg-slate-50 text-slate-900">
                                                         <td className="px-4 py-2">{item.itemName}</td>
                                                         <td className="px-4 py-2">{item.quantity}</td>
                                                         <td className="px-4 py-2">${item.totalAmount}</td>
@@ -549,23 +576,24 @@ const DataEntry = () => {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        {sales.length === 0 && <p className="text-center py-4 text-gray-500">No sales records</p>}
+                                        {sales.length === 0 && <p className="text-center py-4 text-slate-600">No sales records</p>}
                                     </div>
                                 </div>
                             )}
 
                             {/* EXPENSES TAB */}
                             {activeTab === 'expenses' && (
-                                <div className="shadow rounded-lg p-6" style={{backgroundColor: '#FFFFFF'}}>
-                                    <h2 className="text-2xl font-semibold mb-6" style={{color: '#111827'}}>Expense Management</h2>
+                                <div className="shadow rounded-lg p-6 bg-white">
+                                    <h2 className="text-2xl font-semibold mb-6 text-slate-900">Expense Management</h2>
 
                                     {/* Voice Input Section */}
-                                    <div className="mb-8 p-4 rounded-lg" style={{backgroundColor: '#F9FAFB', border: '1px solid #E5E7EB'}}>
-                                        <h3 className="text-lg font-semibold mb-3">🎤 Voice Input</h3>
+                                    <div className="mb-8 p-4 rounded-lg bg-slate-50 border border-slate-200">
+                                        <h3 className="text-lg font-semibold mb-3 text-slate-900">Voice Input (Powered by Gemini AI)</h3>
+                                        
                                         <div className="flex space-x-2 mb-3">
                                             <button
                                                 onClick={startListening}
-                                                disabled={listening}
+                                                disabled={listening || processingVoice}
                                                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                             >
                                                 Start Recording
@@ -579,40 +607,41 @@ const DataEntry = () => {
                                             </button>
                                             <button
                                                 onClick={() => processVoiceInput(transcript)}
-                                                disabled={!transcript}
+                                                disabled={!transcript || processingVoice}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                                             >
-                                                Process Speech
+                                                {processingVoice ? 'Processing with AI...' : 'Process Speech'}
                                             </button>
                                         </div>
                                         {listening && <p className="text-sm text-blue-600 font-semibold">Listening...</p>}
-                                        {transcript && <p className="text-sm text-gray-700">Heard: "{transcript}"</p>}
-                                        <p className="text-xs text-gray-500 mt-2">
-                                            Try saying: "title rent amount 500 category rent"
+                                        {processingVoice && <p className="text-sm text-blue-600 font-semibold">Processing with OpenAI...</p>}
+                                        {transcript && <p className="text-sm text-slate-900">Heard: "{transcript}"</p>}
+                                        <p className="text-xs text-slate-600 mt-2">
+                                            Speak naturally in any language. OpenAI will automatically extract the required information. Example: "I spent 500 rupees on rent"
                                         </p>
                                     </div>
 
                                     {/* Form */}
-                                    <form onSubmit={handleExpenseSubmit} className="mb-8 p-4 bg-gray-50 rounded-lg">
+                                    <form onSubmit={handleExpenseSubmit} className="mb-8 p-4 bg-slate-50 rounded-lg">
                                         <div className="grid grid-cols-3 gap-4">
                                             <input
                                                 type="text"
                                                 placeholder="Title"
                                                 value={expenseForm.title}
                                                 onChange={(e) => setExpenseForm({ ...expenseForm, title: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                             <input
                                                 type="number"
                                                 placeholder="Amount"
                                                 value={expenseForm.amount}
                                                 onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             />
                                             <select
                                                 value={expenseForm.category}
                                                 onChange={(e) => setExpenseForm({ ...expenseForm, category: e.target.value })}
-                                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                                                className="px-3 py-2 border border-gray-300 bg-white text-slate-900 rounded-md focus:outline-none focus:ring-blue-500"
                                             >
                                                 <option value="">Select Category</option>
                                                 <option value="Rent">Rent</option>
@@ -626,8 +655,7 @@ const DataEntry = () => {
                                         </div>
                                         <button
                                             type="submit"
-                                            className="mt-4 w-full px-4 py-2 text-white rounded font-semibold"
-                                            style={{backgroundColor: '#2563EB'}}
+                                            className="mt-4 w-full px-4 py-2 text-white rounded font-semibold bg-blue-600 hover:bg-blue-700"
                                         >
                                             {editingId && editingType === 'expense' ? 'Update Expense' : 'Add Expense'}
                                         </button>
@@ -636,7 +664,7 @@ const DataEntry = () => {
                                     {/* Table */}
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm">
-                                            <thead className="border-b" style={{backgroundColor: '#F9FAFB'}}>
+                                            <thead className="border-b bg-slate-100 text-slate-900">
                                                 <tr>
                                                     <th className="px-4 py-2 text-left">Title</th>
                                                     <th className="px-4 py-2 text-left">Amount</th>
@@ -647,7 +675,7 @@ const DataEntry = () => {
                                             </thead>
                                             <tbody>
                                                 {expenses.map((item) => (
-                                                    <tr key={item._id} className="border-b hover:bg-gray-50">
+                                                    <tr key={item._id} className="border-b hover:bg-slate-50 text-slate-900">
                                                         <td className="px-4 py-2">{item.title}</td>
                                                         <td className="px-4 py-2">${item.amount}</td>
                                                         <td className="px-4 py-2">{item.category}</td>
@@ -670,7 +698,7 @@ const DataEntry = () => {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        {expenses.length === 0 && <p className="text-center py-4 text-gray-500">No expense records</p>}
+                                        {expenses.length === 0 && <p className="text-center py-4 text-slate-600">No expense records</p>}
                                     </div>
                                 </div>
                             )}
@@ -678,6 +706,8 @@ const DataEntry = () => {
                     )}
                 </div>
             </main>
+            
+            <Footer />
         </div>
     );
 };

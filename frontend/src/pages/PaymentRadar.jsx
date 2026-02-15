@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import AppNavbar from '../components/AppNavbar';
 
 
 // Risk Score Component
@@ -18,7 +19,7 @@ const RiskScore = ({ score, riskLevel }) => {
     };
 
     return (
-        <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg p-6 text-white shadow-lg">
+        <div className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg p-6 text-white shadow-lg">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">Risk Score</h3>
             
@@ -187,12 +188,12 @@ const FinancialHealthIndicator = ({ healthStatus, riskScore, avgDailySales, proj
                     <span className="text-4xl">{getHealthIcon()}</span>
                     <div>
                         <h3 className={`text-2xl font-bold ${getHealthTextColor()}`}>{healthStatus}</h3>
-                        <p className="text-sm text-gray-600">Financial Health Status</p>
+                        <p className="text-sm text-slate-600">Financial Health Status</p>
                     </div>
                 </div>
                 
                 <div className="text-center">
-                    <p className="text-sm text-gray-600">Cash Buffer</p>
+                    <p className="text-sm text-slate-600">Cash Buffer</p>
                     <p className={`text-2xl font-bold ${getHealthTextColor()}`}>
                         {cashBufferDays > 0 ? `${cashBufferDays}d` : '< 1d'}
                     </p>
@@ -246,7 +247,7 @@ const PaymentRadar = () => {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-gray-600 text-lg">Loading Payment Radar...</div>
+                <div className="text-slate-600 text-lg">Loading Payment Radar...</div>
             </div>
         );
     }
@@ -279,22 +280,22 @@ const PaymentRadar = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-white">
             {/* Navigation Header */}
             <div className="bg-white shadow-sm border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex justify-between items-center">
-                        <h1 className="text-3xl font-bold text-gray-900">💳 Payment Radar</h1>
+                        <h1 className="text-3xl font-bold text-slate-900">Payment Radar</h1>
                         <div className="flex gap-4">
                             <Link 
                                 to="/dashboard" 
-                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+                                className="px-4 py-2 bg-slate-200 text-slate-900 rounded-lg hover:bg-slate-300 font-medium transition-colors duration-300"
                             >
                                 Back to Dashboard
                             </Link>
                             <button 
                                 onClick={fetchPaymentRadar}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-300"
                             >
                                 Refresh
                             </button>
@@ -331,21 +332,21 @@ const PaymentRadar = () => {
 
                     {/* Key Metrics */}
                     <div className="bg-white p-6 rounded-lg shadow">
-                        <h3 className="text-gray-600 text-sm font-semibold uppercase mb-2">Current Cash</h3>
+                        <h3 className="text-slate-600 text-sm font-semibold uppercase mb-2">Current Cash</h3>
                         <p className="text-3xl font-bold text-blue-600">
                             ₹{financialStatus.currentCash.toLocaleString('en-IN')}
                         </p>
                     </div>
 
                     <div className="bg-white p-6 rounded-lg shadow">
-                        <h3 className="text-gray-600 text-sm font-semibold uppercase mb-2">Upcoming Payments</h3>
+                        <h3 className="text-slate-600 text-sm font-semibold uppercase mb-2">Upcoming Payments</h3>
                         <p className="text-3xl font-bold text-orange-600">
                             ₹{financialStatus.upcomingAmount.toLocaleString('en-IN')}
                         </p>
                     </div>
 
                     <div className={`bg-white p-6 rounded-lg shadow border-l-4 ${financialStatus.riskLevel === 'HIGH' ? 'border-red-500' : (financialStatus.riskLevel === 'MEDIUM' ? 'border-yellow-500' : 'border-green-500')}`}>
-                        <h3 className="text-gray-600 text-sm font-semibold uppercase mb-2">Avg Daily Sales</h3>
+                        <h3 className="text-slate-600 text-sm font-semibold uppercase mb-2">Avg Daily Sales</h3>
                         <p className="text-3xl font-bold text-purple-600">
                             ₹{analytics.averageDailySales.toLocaleString('en-IN')}
                         </p>
@@ -373,18 +374,18 @@ const PaymentRadar = () => {
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Invoice Title</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Amount</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Category</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Due Date</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Days Overdue</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Invoice Title</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Amount</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Category</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Due Date</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Days Overdue</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {overdueInvoices.invoices.map((invoice, idx) => (
-                                        <tr key={idx} className="border-b hover:bg-gray-50">
-                                            <td className="px-6 py-4 font-semibold text-gray-900">{invoice.title}</td>
+                                        <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                                            <td className="px-6 py-4 font-semibold text-slate-900">{invoice.title}</td>
                                             <td className="px-6 py-4 font-bold text-red-600">₹{invoice.amount.toLocaleString('en-IN')}</td>
                                             <td className="px-6 py-4 text-gray-700">{invoice.category}</td>
                                             <td className="px-6 py-4 text-gray-700">{new Date(invoice.dueDate).toLocaleDateString()}</td>
@@ -426,18 +427,18 @@ const PaymentRadar = () => {
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Invoice Title</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Amount</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Category</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Due Date</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Time Until Due</th>
-                                        <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Urgency</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Invoice Title</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Amount</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Category</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Due Date</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Time Until Due</th>
+                                        <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">Urgency</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {upcomingPayments.invoices.map((invoice, idx) => (
-                                        <tr key={idx} className="border-b hover:bg-gray-50">
-                                            <td className="px-6 py-4 font-semibold text-gray-900">{invoice.title}</td>
+                                        <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                                            <td className="px-6 py-4 font-semibold text-slate-900">{invoice.title}</td>
                                             <td className="px-6 py-4 font-bold text-orange-600">₹{invoice.amount.toLocaleString('en-IN')}</td>
                                             <td className="px-6 py-4 text-gray-700">{invoice.category}</td>
                                             <td className="px-6 py-4 text-gray-700">{new Date(invoice.dueDate).toLocaleDateString()}</td>

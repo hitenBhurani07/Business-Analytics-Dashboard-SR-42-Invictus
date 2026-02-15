@@ -58,21 +58,21 @@ const WhyChooseUsSection = () => {
 
 
     return (
-        <section id="why-choose-us" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
+        <section id="why-choose-us" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-blue-50 transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
 
                 {/* Section Header */}
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center px-4 py-2 bg-yellow-100 rounded-full mb-4">
-                        <span className="text-warning font-semibold text-sm">
+                        <span className="text-yellow-700 font-semibold text-sm">
                             Why We're Different
                         </span>
                     </div>
 
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-textMain mb-4">
-                        <span className="text-primary">Why choose us?</span>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+                        <span className="text-blue-600">Why choose us?</span>
                     </h2>
-                    <p className="text-lg text-textLight max-w-3xl mx-auto">
+                    <p className="text-lg text-slate-600 max-w-3xl mx-auto">
                         Other solutions are expensive, complicated, and for large businesses.
 VyapaarSaathi is made just for small business owners like you!
                     </p>
@@ -83,7 +83,7 @@ VyapaarSaathi is made just for small business owners like you!
                     {advantages.map((advantage, index) => (
                         <div
                             key={index}
-                            className="bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border-t-4 border-primary"
+                            className="bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border-t-4 border-blue-600"
                         >
                             {/* Icon */}
                             <div className={`${advantage.color} mb-4`}>
@@ -91,18 +91,18 @@ VyapaarSaathi is made just for small business owners like you!
                             </div>
 
                             {/* Title */}
-                            <h3 className="text-xl font-bold text-textMain mb-3">
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">
                                 {advantage.title}
                             </h3>
 
                             {/* Description */}
-                            <p className="text-textLight mb-4 leading-relaxed">
+                            <p className="text-slate-600 mb-4 leading-relaxed">
                                 {advantage.description}
                             </p>
 
                             {/* Highlight */}
                             <div className="bg-green-50 px-4 py-2 rounded-lg inline-block">
-                                <span className="text-success font-semibold text-sm">
+                                <span className="text-green-700 font-semibold text-sm">
                                     ✓ {advantage.highlight}
                                 </span>
                             </div>

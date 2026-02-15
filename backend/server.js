@@ -8,6 +8,9 @@ const connectDB = require("./config/db");
 // Initialize express app
 const app = express();
 
+// Get PORT from environment or use default
+const PORT = process.env.PORT || 5000;
+
 // Connect to MongoDB
 connectDB();
 
@@ -20,21 +23,22 @@ app.get("/", (req, res) => {
     res.send("API Running...");
 });
 
-
-
-const PORT = process.env.PORT || 5000;
-
+// Import all routes
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const voiceRoutes = require('./routes/voiceRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 const deadStockRoutes = require('./routes/deadStockRoutes');
 
+// Use routes
+// Apply Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/deadstock', deadStockRoutes);
+app.use('/api/voice', voiceRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

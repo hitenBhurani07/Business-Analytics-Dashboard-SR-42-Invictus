@@ -5,6 +5,8 @@ import {
     LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import AppNavbar from '../components/AppNavbar';
+import Footer from '../components/landing/Footer';
 
 const Analytics = () => {
     const [salesData, setSalesData] = useState(null);
@@ -61,39 +63,18 @@ const Analytics = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-gray-600 text-lg">Loading analytics...</div>
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="text-slate-600 text-lg">Loading analytics...</div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Navigation Header */}
-            <div className="bg-white shadow-sm border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-                        <div className="flex gap-4">
-                            <Link 
-                                to="/dashboard" 
-                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
-                            >
-                                Back to Dashboard
-                            </Link>
-                            <button 
-                                onClick={fetchAnalyticsData}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                            >
-                                Refresh Data
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="min-h-screen bg-white flex flex-col">
+            <AppNavbar />
+            
+            <main className="flex-grow pt-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {error && (
                     <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
                         {error}
@@ -104,25 +85,25 @@ const Analytics = () => {
                 {cashFlowData && (
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                         <div className="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
-                            <h3 className="text-gray-600 text-sm font-semibold uppercase mb-2">Current Cash</h3>
+                            <h3 className="text-slate-600 text-sm font-semibold uppercase mb-2">Current Cash</h3>
                             <p className="text-3xl font-bold text-blue-600">
                                 ₹{cashFlowData.summary.currentCash.toLocaleString('en-IN')}
                             </p>
                         </div>
                         <div className="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-                            <h3 className="text-gray-600 text-sm font-semibold uppercase mb-2">Total Sales</h3>
+                            <h3 className="text-slate-600 text-sm font-semibold uppercase mb-2">Total Sales</h3>
                             <p className="text-3xl font-bold text-green-600">
                                 ₹{cashFlowData.summary.totalSales.toLocaleString('en-IN')}
                             </p>
                         </div>
                         <div className="bg-white p-6 rounded-lg shadow border-l-4 border-red-500">
-                            <h3 className="text-gray-600 text-sm font-semibold uppercase mb-2">Total Expenses</h3>
+                            <h3 className="text-slate-600 text-sm font-semibold uppercase mb-2">Total Expenses</h3>
                             <p className="text-3xl font-bold text-red-600">
                                 ₹{cashFlowData.summary.totalExpenses.toLocaleString('en-IN')}
                             </p>
                         </div>
                         <div className={`bg-white p-6 rounded-lg shadow border-l-4 ${cashFlowData.summary.netProfit >= 0 ? 'border-green-500' : 'border-red-500'}`}>
-                            <h3 className="text-gray-600 text-sm font-semibold uppercase mb-2">Net Profit</h3>
+                            <h3 className="text-slate-600 text-sm font-semibold uppercase mb-2">Net Profit</h3>
                             <p className={`text-3xl font-bold ${cashFlowData.summary.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                                 ₹{cashFlowData.summary.netProfit.toLocaleString('en-IN')}
                             </p>
@@ -135,7 +116,7 @@ const Analytics = () => {
                     {/* Sales Revenue Over Time */}
                     {salesData && salesData.chartData.length > 0 && (
                         <div className="bg-white p-6 rounded-lg shadow">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Sales Revenue Trend</h2>
+                            <h2 className="text-xl font-bold text-slate-900 mb-4">Sales Revenue Trend</h2>
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={salesData.chartData}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -157,14 +138,14 @@ const Analytics = () => {
                                     />
                                 </LineChart>
                             </ResponsiveContainer>
-                            <p className="text-sm text-gray-600 mt-4">Total: ₹{salesData.totalSales.toLocaleString('en-IN')}</p>
+                            <p className="text-sm text-slate-600 mt-4">Total: ₹{salesData.totalSales.toLocaleString('en-IN')}</p>
                         </div>
                     )}
 
                     {/* Cash Flow Over Time */}
                     {cashFlowData && cashFlowData.chartData.length > 0 && (
                         <div className="bg-white p-6 rounded-lg shadow">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Cash Flow Projection</h2>
+                            <h2 className="text-xl font-bold text-slate-900 mb-4">Cash Flow Projection</h2>
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={cashFlowData.chartData}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -192,7 +173,7 @@ const Analytics = () => {
                     {/* Sales by Item */}
                     {salesData && salesData.itemData.length > 0 && (
                         <div className="bg-white p-6 rounded-lg shadow">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Sales by Item</h2>
+                            <h2 className="text-xl font-bold text-slate-900 mb-4">Sales by Item</h2>
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={salesData.itemData}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -212,7 +193,7 @@ const Analytics = () => {
                     {/* Expenses by Category */}
                     {expenseData && expenseData.categoryData.length > 0 && (
                         <div className="bg-white p-6 rounded-lg shadow">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">Expenses by Category</h2>
+                            <h2 className="text-xl font-bold text-slate-900 mb-4">Expenses by Category</h2>
                             <ResponsiveContainer width="100%" height={300}>
                                 <PieChart>
                                     <Pie
@@ -232,7 +213,7 @@ const Analytics = () => {
                                     <Tooltip formatter={(value) => `₹${value.toLocaleString('en-IN')}`} />
                                 </PieChart>
                             </ResponsiveContainer>
-                            <p className="text-sm text-gray-600 mt-4">Total: ₹{expenseData.totalExpenses.toLocaleString('en-IN')}</p>
+                            <p className="text-sm text-slate-600 mt-4">Total: ₹{expenseData.totalExpenses.toLocaleString('en-IN')}</p>
                         </div>
                     )}
                 </div>
@@ -240,7 +221,7 @@ const Analytics = () => {
                 {/* Inventory Stock Levels */}
                 {inventoryData && inventoryData.inventoryData.length > 0 && (
                     <div className="bg-white p-6 rounded-lg shadow mb-8">
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">Inventory Stock Levels</h2>
+                        <h2 className="text-xl font-bold text-slate-900 mb-4">Inventory Stock Levels</h2>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={inventoryData.inventoryData}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -259,31 +240,31 @@ const Analytics = () => {
                 {/* Inventory Details Table */}
                 {inventoryData && inventoryData.inventoryData.length > 0 && (
                     <div className="bg-white p-6 rounded-lg shadow mb-8">
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">Inventory Details</h2>
+                        <h2 className="text-xl font-bold text-slate-900 mb-4">Inventory Details</h2>
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
-                                <thead className="bg-gray-50 border-b-2 border-gray-200">
+                                <thead className="bg-slate-100 border-b-2 border-slate-200">
                                     <tr>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Item Name</th>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Quantity</th>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Cost Price</th>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Selling Price</th>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Stock Value</th>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Daily Usage</th>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Days Remaining</th>
-                                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Item Name</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Quantity</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Cost Price</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Selling Price</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Stock Value</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Daily Usage</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Days Remaining</th>
+                                        <th className="px-4 py-3 text-left font-semibold text-slate-900">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {inventoryData.inventoryData.map((item, idx) => (
-                                        <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                                            <td className="px-4 py-3 font-medium text-gray-900">{item.name}</td>
-                                            <td className="px-4 py-3 text-gray-700">{item.quantity}</td>
-                                            <td className="px-4 py-3 text-gray-700">₹{item.costPrice.toLocaleString('en-IN')}</td>
-                                            <td className="px-4 py-3 text-gray-700">₹{item.sellingPrice.toLocaleString('en-IN')}</td>
-                                            <td className="px-4 py-3 font-semibold text-gray-900">₹{item.value.toLocaleString('en-IN')}</td>
-                                            <td className="px-4 py-3 text-gray-700">{item.dailyUsage}</td>
-                                            <td className="px-4 py-3 text-gray-700">{item.daysRemaining === 999 ? '∞' : item.daysRemaining}</td>
+                                        <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                                            <td className="px-4 py-3 font-medium text-slate-900">{item.name}</td>
+                                            <td className="px-4 py-3 text-slate-900">{item.quantity}</td>
+                                            <td className="px-4 py-3 text-slate-900">₹{item.costPrice.toLocaleString('en-IN')}</td>
+                                            <td className="px-4 py-3 text-slate-900">₹{item.sellingPrice.toLocaleString('en-IN')}</td>
+                                            <td className="px-4 py-3 font-semibold text-slate-900">₹{item.value.toLocaleString('en-IN')}</td>
+                                            <td className="px-4 py-3 text-slate-900">{item.dailyUsage}</td>
+                                            <td className="px-4 py-3 text-slate-900">{item.daysRemaining === 999 ? '∞' : item.daysRemaining}</td>
                                             <td className="px-4 py-3">
                                                 {item.daysRemaining < 2 ? (
                                                     <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Critical</span>
@@ -298,13 +279,16 @@ const Analytics = () => {
                                 </tbody>
                             </table>
                         </div>
-                        <p className="text-sm text-gray-600 mt-4">
+                        <p className="text-sm text-slate-600 mt-4">
                             Total Inventory Value: ₹{inventoryData.totalInventoryValue.toLocaleString('en-IN')} | 
                             Low Stock Items: {inventoryData.lowStockCount}
                         </p>
                     </div>
                 )}
-            </div>
+                </div>
+            </main>
+            
+            <Footer />
         </div>
     );
 };
