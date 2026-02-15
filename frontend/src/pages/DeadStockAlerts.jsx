@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BiPackage, BiDollar, BiLink, BiGift, BiMobile } from 'react-icons/bi';
+import { FiTrendingUp, FiAlertTriangle, FiTarget } from 'react-icons/fi';
+import { HiOutlineSparkles } from 'react-icons/hi';
 import AppNavbar from '../components/AppNavbar';
 import Footer from '../components/landing/Footer';
 
@@ -28,199 +31,366 @@ const DeadStockAlerts = () => {
         }
     };
 
-    const getRiskStyle = (riskLevel) => {
-        switch (riskLevel?.toLowerCase()) {
-            case 'high':
-                return {backgroundColor: '#FEE2E2', borderColor: '#EF4444', color: '#991B1B', borderLeft: '4px solid #EF4444'};
-            case 'medium':
-                return {backgroundColor: '#FEF3C7', borderColor: '#FCD34D', color: '#92400E', borderLeft: '4px solid #FCD34D'};
-            case 'low':
-                return {backgroundColor: '#DCFCE7', borderColor: '#10B981', color: '#166534', borderLeft: '4px solid #10B981'};
-            default:
-                return {backgroundColor: '#DBEAFE', borderColor: '#3B82F6', color: '#1E40AF', borderLeft: '4px solid #3B82F6'};
-        }
+    const getCategoryIcon = (category) => {
+        const icons = {
+            bundling: <BiPackage className="w-5 h-5" />,
+            discount: <BiDollar className="w-5 h-5" />,
+            crosssell: <BiLink className="w-5 h-5" />,
+            promotion: <BiGift className="w-5 h-5" />,
+            bulk: <BiMobile className="w-5 h-5" />,
+            seasonal: <FiTarget className="w-5 h-5" />
+        };
+        return icons[category?.toLowerCase()] || <HiOutlineSparkles className="w-5 h-5" />;
     };
 
-    const getRiskBadgeColor = (riskLevel) => {
+    const getCategoryColor = (category) => {
+        const colors = {
+            bundling: { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-700', icon: 'text-blue-600' },
+            discount: { bg: 'bg-amber-50', border: 'border-amber-500', text: 'text-amber-700', icon: 'text-amber-600' },
+            crosssell: { bg: 'bg-emerald-50', border: 'border-emerald-500', text: 'text-emerald-700', icon: 'text-emerald-600' },
+            promotion: { bg: 'bg-purple-50', border: 'border-purple-500', text: 'text-purple-700', icon: 'text-purple-600' },
+            bulk: { bg: 'bg-orange-50', border: 'border-orange-500', text: 'text-orange-700', icon: 'text-orange-600' },
+            seasonal: { bg: 'bg-pink-50', border: 'border-pink-500', text: 'text-pink-700', icon: 'text-pink-600' }
+        };
+        return colors[category?.toLowerCase()] || { bg: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-700', icon: 'text-gray-600' };
+    };
+
+    const getRiskColor = (riskLevel) => {
         switch (riskLevel?.toLowerCase()) {
             case 'high':
-                return {backgroundColor: '#EF4444', color: '#FFFFFF'};
+                return { bg: 'bg-red-50', border: 'border-red-200', badge: 'bg-red-100 text-red-800', text: 'text-red-700' };
             case 'medium':
-                return {backgroundColor: '#F59E0B', color: '#FFFFFF'};
+                return { bg: 'bg-yellow-50', border: 'border-yellow-200', badge: 'bg-yellow-100 text-yellow-800', text: 'text-yellow-700' };
             case 'low':
-                return {backgroundColor: '#10B981', color: '#FFFFFF'};
+                return { bg: 'bg-green-50', border: 'border-green-200', badge: 'bg-green-100 text-green-800', text: 'text-green-700' };
             default:
-                return {backgroundColor: '#2563EB', color: '#FFFFFF'};
+                return { bg: 'bg-blue-50', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-800', text: 'text-blue-700' };
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-white">
             <AppNavbar />
             
-            <main className="flex-grow pt-20">
-                <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <main className="flex-grow">
+                {/* Hero Section */}
+                {!analyzed && (
+                    <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+                        <div className="max-w-6xl mx-auto text-center">
+                            <div className="inline-flex items-center px-4 py-2 bg-white rounded-full shadow-sm mb-8">
+                                <HiOutlineSparkles className="w-4 h-4 text-indigo-600 mr-2" />
+                                <span className="text-indigo-600 font-semibold text-sm">AI-Powered Inventory Intelligence</span>
+                            </div>
+                            
+                            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                                Unlock Hidden <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Profit</span> in Your Inventory
+                            </h1>
+                            
+                            <p className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed">
+                                Instantly identify dead stock and get actionable business strategies to move slow-moving inventory. Maximize revenue with AI-powered solutions.
+                            </p>
+
+                            <button
+                                onClick={analyzeDeadStock}
+                                disabled={loading}
+                                className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-10 py-5 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+                            >
+                                {loading ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                        Analyzing Your Inventory...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiTrendingUp className="w-5 h-5" />
+                                        Analyze Dead Stock
+                                    </>
+                                )}
+                            </button>
+
+                            {/* Feature Highlight */}
+                            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                                <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="text-3xl mb-3 font-bold text-blue-600">5</div>
+                                    <p className="text-gray-700 font-semibold">Actionable Solutions</p>
+                                    <p className="text-gray-500 text-sm mt-1">Per dead stock item</p>
+                                </div>
+                                <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="text-3xl mb-3 font-bold text-indigo-600">AI-Powered</div>
+                                    <p className="text-gray-700 font-semibold">Smart Analysis</p>
+                                    <p className="text-gray-500 text-sm mt-1">Using Mistral AI</p>
+                                </div>
+                                <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="text-3xl mb-3 font-bold text-purple-600">Instant</div>
+                                    <p className="text-gray-700 font-semibold">Real-Time Results</p>
+                                    <p className="text-gray-500 text-sm mt-1">In 5-15 seconds</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                )}
+
+                {/* Results Section */}
+                {analyzed && analysis && (
+                    <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-6xl mx-auto">
                     {error && (
-                        <div className="mb-4 p-4 rounded" style={{backgroundColor: '#FEE2E2', borderColor: '#EF4444', border: '1px solid #EF4444', color: '#991B1B'}}>
+                        <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 font-semibold">
                             {error}
                         </div>
                     )}
 
-                    {!analyzed && (
-                        <div className="shadow rounded-lg p-6 mb-6" style={{backgroundColor: '#FFFFFF'}}>
-                            <h2 className="text-2xl font-semibold mb-4" style={{color: '#111827'}}>Analyze Your Inventory</h2>
-                            <p className="mb-6" style={{color: '#6B7280'}}>
-                                Our AI-powered system will analyze your inventory and sales data to identify dead stock items that aren't selling well compared to others.
-                            </p>
-                            <button
-                                onClick={analyzeDeadStock}
-                                disabled={loading}
-                                className="px-6 py-3 text-white rounded-lg font-semibold transition disabled:opacity-50"
-                                style={{backgroundColor: '#2563EB'}}
-                            >
-                                {loading ? 'Analyzing...' : 'Analyze Dead Stock'}
-                            </button>
+                    {/* Summary Cards */}
+                    {analysis.deadStockAlerts && (
+                        <div className="mb-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-blue-500">
+                                <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Dead Stock Items</p>
+                                <p className="text-4xl font-bold text-blue-600 mt-2">{analysis.deadStockAlerts.length}</p>
+                            </div>
+                            <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-red-500">
+                                <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">High Risk Items</p>
+                                <p className="text-4xl font-bold text-red-600 mt-2">
+                                    {analysis.deadStockAlerts.filter(a => a.risk_level?.toLowerCase() === 'high').length}
+                                </p>
+                            </div>
+                            <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-yellow-500">
+                                <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Total Stock Units</p>
+                                <p className="text-4xl font-bold text-yellow-600 mt-2">
+                                    {analysis.deadStockAlerts.reduce((sum, a) => sum + (a.currentStock || 0), 0)}
+                                </p>
+                            </div>
+                            <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-green-500">
+                                <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Potential Revenue</p>
+                                <p className="text-4xl font-bold text-green-600 mt-2">
+                                    +{Math.round(analysis.deadStockAlerts.reduce((sum, a) => sum + (a.currentStock || 0), 0) * 0.4)}
+                                </p>
+                            </div>
                         </div>
                     )}
 
-                    {analyzed && analysis && (
-                        <>
-                            {/* Summary Section */}
-                            <div className="shadow rounded-lg p-6 mb-6" style={{backgroundColor: '#FFFFFF'}}>
-                                <h2 className="text-2xl font-semibold mb-4" style={{color: '#111827'}}>Analysis Summary</h2>
-                                <p className="mb-4" style={{color: '#111827'}}>
-                                    {analysis.summary || analysis.overallAnalysis || 'Analysis completed'}
-                                </p>
-                                <button
-                                    onClick={() => setAnalyzed(false)}
-                                    className="px-4 py-2 text-white rounded font-semibold transition"
-                                    style={{backgroundColor: '#6B7280'}}
-                                >
-                                    Run New Analysis
-                                </button>
+                    {/* Analysis Summary */}
+                    {analysis.summary && (
+                        <div className="mb-12">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-4">Analysis Summary</h2>
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 border border-blue-200">
+                                <p className="text-lg text-gray-700 leading-relaxed">{analysis.summary}</p>
                             </div>
+                        </div>
+                    )}
 
-                            {/* Dead Stock Alerts */}
-                            {analysis.deadStockAlerts && analysis.deadStockAlerts.length > 0 && (
-                                <div className="mb-6">
-                                    <h3 className="text-2xl font-semibold mb-4" style={{color: '#111827'}}>Dead Stock Items Detected</h3>
-                                    <div className="space-y-4">
-                                        {analysis.deadStockAlerts.map((alert, index) => (
-                                            <div
-                                                key={index}
-                                                className="rounded-lg p-4"
-                                                style={getRiskStyle(alert.risk_level)}
-                                            >
-                                                <div className="flex items-start justify-between mb-2">
-                                                    <h4 className="text-lg font-semibold">{alert.itemName}</h4>
-                                                    <span className="px-3 py-1 rounded-full text-sm font-semibold" style={getRiskBadgeColor(alert.risk_level)}>
-                                                        {alert.risk_level?.toUpperCase()}
-                                                    </span>
-                                                </div>
-
-                                                <div className="grid grid-cols-2 gap-4 mb-3 text-sm">
-                                                    <div>
-                                                        <p style={{color: 'inherit'}} className="opacity-75">Current Stock</p>
-                                                        <p className="font-semibold">{alert.currentStock || alert.quantity || 'N/A'}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p style={{color: 'inherit'}} className="opacity-75">Sales Count</p>
-                                                        <p className="font-semibold">{alert.salesCount || 0}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p style={{color: 'inherit'}} className="opacity-75">Quantity Sold</p>
-                                                        <p className="font-semibold">{alert.quantitySold || 0}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p style={{color: 'inherit'}} className="opacity-75">Urgency</p>
-                                                        <p className="font-semibold">{alert.urgency || 'Medium'}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="mb-3">
-                                                    <p className="text-sm font-semibold mb-1">Reason</p>
-                                                    <p className="text-sm">{alert.reason}</p>
-                                                </div>
-
+                    {/* Dead Stock Items */}
+                    {analysis.deadStockAlerts && analysis.deadStockAlerts.length > 0 && (
+                        <div className="mb-12">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-8">Dead Stock Items Identified</h2>
+                            <div className="space-y-6">
+                                {analysis.deadStockAlerts.map((alert, index) => {
+                                    const riskColor = getRiskColor(alert.risk_level);
+                                    return (
+                                        <div key={index} className={`${riskColor.bg} border ${riskColor.border} rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300`}>
+                                            <div className="flex items-start justify-between mb-6">
                                                 <div>
-                                                    <p className="text-sm font-semibold mb-1">Recommendation</p>
-                                                    <p className="text-sm">{alert.recommendation}</p>
+                                                    <h3 className="text-2xl font-bold text-gray-900">{alert.itemName}</h3>
+                                                    <p className={`text-sm font-semibold mt-1 ${riskColor.text}`}>{alert.reason}</p>
+                                                </div>
+                                                <span className={`${riskColor.badge} px-4 py-2 rounded-lg font-bold text-sm uppercase tracking-wide`}>
+                                                    {alert.risk_level?.toUpperCase() || 'MEDIUM'} Risk
+                                                </span>
+                                            </div>
+
+                                            {/* Metrics Grid */}
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 pb-8 border-b border-gray-300 border-opacity-30">
+                                                <div>
+                                                    <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Current Stock</p>
+                                                    <p className="text-2xl font-bold text-gray-900 mt-2">{alert.currentStock || alert.quantity || 'N/A'} units</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Sales Count</p>
+                                                    <p className="text-2xl font-bold text-gray-900 mt-2">{alert.salesCount || 0}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Total Sold</p>
+                                                    <p className="text-2xl font-bold text-gray-900 mt-2">{alert.quantitySold || 0} units</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-gray-600 text-sm font-semibold uppercase tracking-wide">Last Sale</p>
+                                                    <p className="text-2xl font-bold text-gray-900 mt-2">{alert.daysLastSold || 'N/A'} days ago</p>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
 
-                            {analysis.deadStockAlerts && analysis.deadStockAlerts.length === 0 && (
-                                <div className="rounded-lg p-6 mb-6" style={{backgroundColor: '#DCFCE7', borderColor: '#10B981', border: '1px solid #10B981', color: '#166534'}}>
-                                    <h3 className="text-lg font-semibold mb-2">Great News!</h3>
-                                    <p>No dead stock detected. Your inventory is selling well!</p>
-                                </div>
-                            )}
-
-                            {/* Overall Analysis */}
-                            {analysis.overallAnalysis && (
-                                <div className="shadow rounded-lg p-6" style={{backgroundColor: '#FFFFFF'}}>
-                                    <h2 className="text-2xl font-semibold mb-4" style={{color: '#111827'}}>Detailed Analysis</h2>
-                                    <div className="whitespace-pre-wrap" style={{color: '#111827'}}>
-                                        {analysis.overallAnalysis}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Inventory Data Table */}
-                            {analysis.inventoryData && analysis.inventoryData.length > 0 && (
-                                <div className="shadow rounded-lg p-6 mt-6" style={{backgroundColor: '#FFFFFF'}}>
-                                    <h2 className="text-2xl font-semibold mb-4" style={{color: '#111827'}}>Inventory Performance Data</h2>
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-sm">
-                                            <thead className="border-b" style={{backgroundColor: '#F9FAFB'}}>
-                                                <tr>
-                                                    <th className="px-4 py-2 text-left">Item Name</th>
-                                                    <th className="px-4 py-2 text-left">Stock</th>
-                                                    <th className="px-4 py-2 text-left">Sold</th>
-                                                    <th className="px-4 py-2 text-left">Sales Count</th>
-                                                    <th className="px-4 py-2 text-left">Turnover Ratio</th>
-                                                    <th className="px-4 py-2 text-left">Profit Margin</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {analysis.inventoryData.map((item, index) => (
-                                                    <tr key={index} className="border-b hover:bg-gray-50">
-                                                        <td className="px-4 py-2">{item.itemName}</td>
-                                                        <td className="px-4 py-2">{item.quantity}</td>
-                                                        <td className="px-4 py-2">{item.totalQuantitySold}</td>
-                                                        <td className="px-4 py-2">{item.salesCount}</td>
-                                                        <td className="px-4 py-2">
-                                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                                                                item.turnover_ratio > 0.5 ? 'bg-green-100 text-green-800' :
-                                                                item.turnover_ratio > 0.2 ? 'bg-yellow-100 text-yellow-800' :
-                                                                'bg-red-100 text-red-800'
-                                                            }`}>
-                                                                {item.turnover_ratio}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-4 py-2">{item.profit_margin}%</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            )}
-                        </>
-                    )}
-
-                    {loading && (
-                        <div className="bg-white shadow rounded-lg p-6 text-center">
-                            <p className="text-lg text-gray-600 mb-4">AI is analyzing your inventory...</p>
-                            <div className="flex justify-center">
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                                            {/* Business Solutions */}
+                                            {alert.solutions && alert.solutions.length > 0 && (
+                                                <div>
+                                                    <h4 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
+                                                        <HiOutlineSparkles className="w-5 h-5 mr-2 text-indigo-600" />
+                                                        Recommended Action Plans
+                                                    </h4>
+                                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                                        {alert.solutions.map((solution, solIndex) => {
+                                                            const categoryColor = getCategoryColor(solution.category);
+                                                            return (
+                                                                <div 
+                                                                    key={solIndex}
+                                                                    className={`${categoryColor.bg} border-l-4 ${categoryColor.border} rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300`}
+                                                                >
+                                                                    <div className="flex items-start justify-between mb-3">
+                                                                        <div className={`${categoryColor.icon} text-2xl`}>
+                                                                            {getCategoryIcon(solution.category)}
+                                                                        </div>
+                                                                        <span className={`${categoryColor.bg} border ${categoryColor.border} px-3 py-1 rounded text-xs font-bold uppercase tracking-wider ${categoryColor.text}`}>
+                                                                            {solution.category?.toUpperCase()}
+                                                                        </span>
+                                                                    </div>
+                                                                    <h5 className={`text-base font-bold mb-2 ${categoryColor.text}`}>{solIndex + 1}. {solution.title}</h5>
+                                                                    <p className="text-gray-700 text-sm mb-3 leading-relaxed">{solution.description}</p>
+                                                                    {solution.expectedOutcome && (
+                                                                        <div className="bg-white bg-opacity-70 rounded p-3 border-l-2 border-gray-400">
+                                                                            <p className="text-xs font-bold text-gray-700 uppercase tracking-wide">Expected Outcome</p>
+                                                                            <p className="text-sm text-gray-900 mt-1 font-semibold">{solution.expectedOutcome}</p>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
-                </div>
+
+                    {/* No Dead Stock Message */}
+                    {analysis.deadStockAlerts && analysis.deadStockAlerts.length === 0 && (
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-12 text-center">
+                            <div className="flex justify-center mb-4">
+                                <div className="bg-green-100 rounded-full p-4">
+                                    <FiTarget className="w-8 h-8 text-green-600" />
+                                </div>
+                            </div>
+                            <h3 className="text-2xl font-bold text-green-900 mb-2">Excellent Inventory Health</h3>
+                            <p className="text-green-700 text-lg">No dead stock detected. Your inventory is performing well with strong sales velocity across all items.</p>
+                        </div>
+                    )}
+
+                    {/* Inventory Performance Table */}
+                    {analysis.inventoryData && analysis.inventoryData.length > 0 && (
+                        <div className="mt-12">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-8">Complete Inventory Performance</h2>
+                            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-gray-50 border-b border-gray-200">
+                                            <tr>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Item Name</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Current Stock</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Total Sold</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Sales Count</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Last Sale</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Turnover</th>
+                                                <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 uppercase tracking-wide">Margin</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200">
+                                            {analysis.inventoryData.map((item, index) => (
+                                                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 text-sm font-semibold text-gray-900">{item.itemName}</td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700 font-medium">{item.quantity}</td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700 font-medium">{item.totalQuantitySold}</td>
+                                                    <td className="px-6 py-4 text-sm text-gray-700 font-medium">{item.salesCount}</td>
+                                                    <td className="px-6 py-4 text-sm">
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                                            item.daysLastSold === 999 ? 'bg-red-100 text-red-800' :
+                                                            item.daysLastSold > 30 ? 'bg-yellow-100 text-yellow-800' :
+                                                            'bg-green-100 text-green-800'
+                                                        }`}>
+                                                            {item.daysLastSold === 999 ? 'Never' : item.daysLastSold + 'd'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm">
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                                            item.turnover_ratio > 0.5 ? 'bg-green-100 text-green-800' :
+                                                            item.turnover_ratio > 0.2 ? 'bg-yellow-100 text-yellow-800' :
+                                                            'bg-red-100 text-red-800'
+                                                        }`}>
+                                                            {item.turnover_ratio}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm font-bold text-gray-900">{item.profit_margin}%</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Detailed Analysis */}
+                    {analysis.overallAnalysis && (
+                        <div className="mt-12">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-8">Detailed Analysis Report</h2>
+                            <div className="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+                                <div className="prose prose-lg max-w-none">
+                                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{analysis.overallAnalysis}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Action Button */}
+                    <div className="mt-12 text-center">
+                        <button
+                            onClick={() => setAnalyzed(false)}
+                            className="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                        >
+                            <FiTrendingUp className="w-5 h-5" />
+                            Run New Analysis
+                        </button>
+                    </div>
+                        </div>
+                    </div>
+                    )}
+
+                {/* Loading State */}
+                {loading && (
+                    <div className="pt-32 pb-32 px-4">
+                        <div className="max-w-2xl mx-auto text-center">
+                            <div className="flex justify-center mb-8">
+                                <div className="relative w-16 h-16">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full animate-spin"></div>
+                                    <div className="absolute inset-2 bg-white rounded-full"></div>
+                                </div>
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-2">Analyzing Your Inventory</h3>
+                            <p className="text-gray-600">Our AI is reviewing your inventory and sales data to identify opportunities...</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Error State */}
+                {error && !analyzed && (
+                    <div className="pt-32 pb-32 px-4">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="bg-red-50 border border-red-200 rounded-xl p-8">
+                                <div className="flex items-start">
+                                    <FiAlertTriangle className="w-8 h-8 text-red-600 mt-1 mr-4 flex-shrink-0" />
+                                    <div>
+                                        <h3 className="text-lg font-bold text-red-900 mb-2">Analysis Failed</h3>
+                                        <p className="text-red-700 mb-4">{error}</p>
+                                        <button
+                                            onClick={analyzeDeadStock}
+                                            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                                        >
+                                            Try Again
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
             
             <Footer />

@@ -28,27 +28,20 @@ const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const voiceRoutes = require('./routes/voiceRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
+const dataRoutes = require('./routes/dataRoutes');
+const deadStockRoutes = require('./routes/deadStockRoutes');
 
+// Apply Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/inventory', inventoryRoutes);
-
 app.use('/api/data', dataRoutes);
 app.use('/api/deadstock', deadStockRoutes);
-app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/voice', voiceRoutes);
-
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-
-const dataRoutes = require('./routes/dataRoutes');
-
-
-app.use('/api/data', dataRoutes);
-app.use('/api/deadstock', deadStockRoutes);
 
 
 
