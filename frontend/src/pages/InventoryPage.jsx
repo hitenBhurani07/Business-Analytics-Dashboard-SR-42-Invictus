@@ -150,7 +150,7 @@ const InventoryPage = () => {
                 <FiTrendingUp className="text-2xl text-accent" />
               </div>
               <span className="text-xs font-semibold text-accent bg-accent/10 px-2 py-1 rounded-full">
-                ❄️ Winter
+                Winter
               </span>
             </div>
             <h3 className="text-3xl font-bold text-accent mb-1">
@@ -205,7 +205,7 @@ const InventoryPage = () => {
         </div>
 
         {/* AI Feature Info Banner */}
-        <div className="bg-gradient-to-r from-accent/10 via-primary/10 to-secondary/10 border border-accent/20 rounded-xl p-6">
+        <div className="bg-linear-to-r from-accent/10 via-primary/10 to-secondary/10 border border-accent/20 rounded-xl p-6">
           <div className="flex items-start gap-4">
             <div className="text-4xl"></div>
             <div className="flex-1">

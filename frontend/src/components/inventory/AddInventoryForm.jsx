@@ -82,7 +82,7 @@ const AddInventoryForm = ({ isOpen, onClose, onSuccess }) => {
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
 
                 {/* Header */}
-                <div className="bg-gradient-to-r from-primary to-accent p-6 text-black flex items-center justify-between">
+                <div className="bg-linear-to-r from-primary to-accent p-6 text-black flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                             <FiPackage className="text-2xl" />

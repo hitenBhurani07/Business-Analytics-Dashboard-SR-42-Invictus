@@ -188,23 +188,23 @@ const Dashboard = () => {
 
 
                 {/* Quick Navigation Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-black">
                     <button
                         onClick={() => navigate('/inventory')}
-                        className="bg-gradient-to-br from-primary to-accent text-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 text-left group"
+                        className="bg-linear-to-br from-primary to-accent text-black rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 text-left group"
                     >
                         <div className="flex items-center justify-between mb-4">
                             <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-3xl">
-                                📦
+                                
                             </div>
-                            <svg className="w-6 h-6 text-white/80 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-6 h-6 text-black/80 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
                         <h3 className="text-xl font-bold mb-2">Smart Inventory</h3>
-                        <p className="text-white/80 text-sm">AI-powered seasonal reorder management</p>
+                        <p className="text-black/80 text-sm">AI-powered seasonal reorder management</p>
                         <div className="mt-4 flex items-center gap-2">
-                            <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">🤖 AI Enabled</span>
+                            <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold"> AI Enabled</span>
                         </div>
                     </button>
                 </div>

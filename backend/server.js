@@ -26,6 +26,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const voiceRoutes = require('./routes/voiceRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const dataRoutes = require('./routes/dataRoutes');
+const deadStockRoutes = require('./routes/deadStockRoutes');
 
 // Use routes
 app.use('/api/auth', authRoutes);
