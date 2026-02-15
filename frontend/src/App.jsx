@@ -3,6 +3,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Analytics from "./pages/Analytics";
+import PaymentRadar from "./pages/PaymentRadar";
 import DataEntry from "./pages/DataEntry";
 import DeadStockAlerts from "./pages/DeadStockAlerts";
 import LandingPage from "./pages/LandingPage";
@@ -53,6 +54,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/analytics"
           element={
@@ -61,6 +63,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/payment-radar"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <PaymentRadar />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/data-entry"
           element={
@@ -69,6 +81,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/dead-stock-alerts"
           element={
@@ -77,6 +90,18 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+        <><Route path="/register" element={<Register setIsAuthenticated={setIsAuthenticated} />} /><Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} /><Route
+      path="/dashboard"
+      element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+        <Dashboard />
+      </ProtectedRoute>} /><Route
+        path="/inventory"
+        element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+          <InventoryPage />
+        </ProtectedRoute>} /></>
       </Routes>
     </Router>
   );

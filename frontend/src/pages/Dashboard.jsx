@@ -16,42 +16,42 @@ const Dashboard = () => {
     const navigate = useNavigate();
 
     const fetchData = useCallback(async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/login');
-                    return;
-                }
-
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-
-                const [summaryRes, alertsRes, riskRes, projectionRes, inventoryRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/dashboard/summary', config),
-                    axios.get('http://localhost:5000/api/dashboard/alerts', config),
-                    axios.get('http://localhost:5000/api/dashboard/inventory-risk', config),
-                    axios.get('http://localhost:5000/api/dashboard/cash-projection', config),
-                    axios.get('http://localhost:5000/api/dashboard/inventory', config),
-                ]);
-
-                setSummary(summaryRes.data);
-                setAlerts(alertsRes.data);
-                setInventoryRisk(riskRes.data);
-                setCashProjection(projectionRes.data);
-                setInventoryAll(inventoryRes.data);
-                setLastUpdated(new Date());
-            } catch (err) {
-                console.error(err);
-                setError('Failed to fetch dashboard data');
-                if (err.response && err.response.status === 401) {
-                    navigate('/login');
-                }
-            } finally {
-                setLoading(false);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
             }
+
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            };
+
+            const [summaryRes, alertsRes, riskRes, projectionRes, inventoryRes] = await Promise.all([
+                axios.get('http://localhost:5000/api/dashboard/summary', config),
+                axios.get('http://localhost:5000/api/dashboard/alerts', config),
+                axios.get('http://localhost:5000/api/dashboard/inventory-risk', config),
+                axios.get('http://localhost:5000/api/dashboard/cash-projection', config),
+                axios.get('http://localhost:5000/api/dashboard/inventory', config),
+            ]);
+
+            setSummary(summaryRes.data);
+            setAlerts(alertsRes.data);
+            setInventoryRisk(riskRes.data);
+            setCashProjection(projectionRes.data);
+            setInventoryAll(inventoryRes.data);
+            setLastUpdated(new Date());
+        } catch (err) {
+            console.error(err);
+            setError('Failed to fetch dashboard data');
+            if (err.response && err.response.status === 401) {
+                navigate('/login');
+            }
+        } finally {
+            setLoading(false);
+        }
     }, [navigate]);
 
     useEffect(() => {
@@ -185,6 +185,30 @@ const Dashboard = () => {
                     </div>
                 </div>
 
+
+
+                {/* Quick Navigation Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button
+                        onClick={() => navigate('/inventory')}
+                        className="bg-gradient-to-br from-primary to-accent text-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 text-left group"
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-3xl">
+                                📦
+                            </div>
+                            <svg className="w-6 h-6 text-white/80 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-bold mb-2">Smart Inventory</h3>
+                        <p className="text-white/80 text-sm">AI-powered seasonal reorder management</p>
+                        <div className="mt-4 flex items-center gap-2">
+                            <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">🤖 AI Enabled</span>
+                        </div>
+                    </button>
+                </div>
+
                 {/* 2. Key Metrics Snapshot */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <MetricCard
@@ -234,8 +258,8 @@ const Dashboard = () => {
                             <div className="space-y-3">
                                 {alerts.map((alert, index) => (
                                     <div key={index} className={`flex items-start p-4 rounded-xl border shadow-sm transition-all ${alert.level === 'red'
-                                            ? 'bg-red-50 border-red-200'
-                                            : 'bg-yellow-50 border-yellow-200'
+                                        ? 'bg-red-50 border-red-200'
+                                        : 'bg-yellow-50 border-yellow-200'
                                         }`}>
                                         <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${alert.level === 'red' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600'
                                             }`}>

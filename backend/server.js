@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 // Import all routes
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const voiceRoutes = require('./routes/voiceRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 const dataRoutes = require('./routes/dataRoutes');
 
@@ -31,6 +32,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/data', dataRoutes);
+app.use('/api/deadstock', deadStockRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/voice', voiceRoutes);
 
 const PORT = process.env.PORT || 5000;
 
